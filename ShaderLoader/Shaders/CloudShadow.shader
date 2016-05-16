@@ -3,8 +3,13 @@
 		_Color("Color Tint", Color) = (1,1,1,1)
 		_MainTex("Main (RGB)", 2D) = "white" {}
 		_DetailTex("Detail (RGB)", 2D) = "white" {}
+		_UVNoiseTex("UV Noise (RG)", 2D) = "black" {}
 		_DetailScale("Detail Scale", float) = 100
 		_DetailDist("Detail Distance", Range(0,1)) = 0.00875
+		_UVNoiseScale("UV Noise Scale", Range(0,0.1)) = 0.01
+		_UVNoiseStrength("UV Noise Strength", Range(0,0.1)) = 0.002
+		_UVNoiseAnimation("UV Noise Animation", Vector) = (0.002,0.001,0)
+
 		_PlanetOrigin("Sphere Center", Vector) = (0,0,0,1)
 		_SunDir("Sunlight direction", Vector) = (0,0,0,1)
 		_Radius("Radius", Float) = 1
@@ -35,9 +40,13 @@
 
 			fixed4 _Color;
 			uniform sampler2D _DetailTex;
+			uniform sampler2D _UVNoiseTex;
 			fixed4 _DetailOffset;
 			float _DetailScale;
 			float _DetailDist;
+			float _UVNoiseScale;
+			float _UVNoiseStrength;
+			float2 _UVNoiseAnimation;
 			float4 _SunDir;
 			float _Radius;
 			float _PlanetRadius;
@@ -107,7 +116,7 @@
 				shadowCheck *= saturate(.2*((IN.originDist + 5) - _PlanetRadius));
 #endif
 
-				half4 main = GET_CUBE_MAP_1(_MainTex, IN.mainPos);
+				half4 main = GET_CUBE_MAP_P(_MainTex, IN.mainPos, _UVNoiseTex, _UVNoiseScale, _UVNoiseStrength, _UVNoiseAnimation);
 				main = ALPHA_COLOR_1(main);
 
 				half4 detail = GetCubeDetailMap(_DetailTex, IN.detailPos, _DetailScale);
