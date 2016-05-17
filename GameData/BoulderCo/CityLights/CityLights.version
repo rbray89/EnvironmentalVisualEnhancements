@@ -1,0 +1,14 @@
+{
+  "NAME": "EnvironmentalVisualEffects - CityLights",
+  "URL": "https://raw.githubusercontent.com/rbray89/EnvironmentalVisualEnhancements/master/GameData/BoulderCo/CityLights/CityLights.version",
+  "VERSION": {
+    "MAJOR": 7,
+    "MINOR": 3,
+    "PATCH": "LR"
+  },
+  "KSP_VERSION": {
+    "MAJOR": 0,
+    "MINOR": 23,
+    "PATCH": 5
+  }
+}
