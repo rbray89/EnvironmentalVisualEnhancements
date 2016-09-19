@@ -78,36 +78,18 @@ namespace ShaderLoader
                 if (AssetLoader.LoadedBundleDefinitions[i].name == ShaderBundleName()) {
                     KSPLog.print("Loading AssetBundle " + AssetLoader.LoadedBundleDefinitions[i].name);
                     var bundle = AssetLoader.LoadedBundles[i];
-                    asyncAssetLoading = bundle.LoadAllAssetsAsync<Shader>();
+                    // No performance benefit from using ASync version of this,
+                    // and sometimes it too only returns 1 shader (maybe same bug KSP hits?)
+                    var shaders = bundle.LoadAllAssets<Shader>();
+                    foreach (var shader in shaders) {
+                        KSPLog.print("Loading EVE shader " + shader.name);
+                        shaderDictionary[shader.name] = shader;
+                    }
+                    if (onLoaded != null) onLoaded();
                     break;
                 }
             }
         }
-
-        void LoadShaders(Object[] shaders)
-        {
-            KSPLog.print(shaders.Length + " EVE shaders found");
-            foreach (var obj in shaders) {
-                var shader = obj as Shader;
-                if (shader) {
-                    KSPLog.print("Loading EVE shader " + shader.name);
-                    shaderDictionary[shader.name] = shader;
-                } else {
-                    KSPLog.print("Unexpected EVE asset " + obj.name);
-                }
-            }
-            if (onLoaded != null) onLoaded();
-        }
-
-        AssetBundleRequest asyncAssetLoading = null;
-        void Update()
-        {
-            if (asyncAssetLoading != null && asyncAssetLoading.isDone) {
-                LoadShaders(asyncAssetLoading.allAssets);
-                asyncAssetLoading = null;
-            }
-        }
-
 
         public static Shader FindShader(string name)
         {

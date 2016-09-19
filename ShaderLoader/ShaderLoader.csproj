@@ -128,26 +128,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\alphaMap.cginc" />
-    <None Include="Shaders\cubeMap.cginc" />
-    <None Include="Shaders\PartIVA.shader" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shaders\CloudShadow.shader" />
-    <None Include="Shaders\CloudVolumeParticle.shader" />
-    <None Include="Shaders\EVEUtils.cginc" />
-    <None Include="Shaders\noiseSimplex.cginc" />
-    <None Include="Shaders\OceanBack.shader" />
-    <None Include="Shaders\PlanetShadow.shader" />
-    <None Include="Shaders\SphereAtmosphere.shader" />
-    <None Include="Shaders\SphereCloud.shader" />
-    <None Include="Shaders\SphereOcean.shader" />
-    <None Include="Shaders\SpherePlanet.shader" />
-    <None Include="Shaders\SpherePlanetCityLights.shader" />
-    <None Include="Shaders\SpherePlanetLighting.shader" />
-    <None Include="Shaders\SphereTerrain.shader" />
-    <None Include="Shaders\SphereTerrainCityLights.shader" />
-    <None Include="Shaders\SphereTerrainLighting.shader" />
+    <Folder Include="Shaders\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
