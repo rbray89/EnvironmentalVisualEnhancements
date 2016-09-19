@@ -100,8 +100,9 @@
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\KSPResources\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="KSPUtil">
-      <HintPath>..\KSPResources\KSPUtil.dll</HintPath>
+    <Reference Include="KSPAssets, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\KSP\KSP_1.2\KSP_x64_Data\Managed\KSPAssets.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -150,7 +151,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(ProjectDir)CompiledShaders\*" "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Shaders" /yir
+    <PostBuildEvent>xcopy "$(ProjectDir)\AssetBundles\*.ksp" "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements" /yir
 xcopy $(TargetFileName) "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Plugins\" /eyir
 
 call "C:\Program Files (x86)\Mono\bin\pdb2mdb" $(TargetFileName)

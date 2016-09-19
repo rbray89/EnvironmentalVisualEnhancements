@@ -41,15 +41,23 @@ namespace EVEManager
             }
             
 
-            Setup(false);
-            StartCoroutine(SetupDelay());
+            ShaderLoader.ShaderLoaderClass.onLoaded += ShadersLoaded;
         }
 
+        bool runLateSetup = false;
 
-        IEnumerator SetupDelay()
+        void ShadersLoaded()
         {
-            yield return new WaitForFixedUpdate();
-            Setup(true);
+            Setup(false);
+            runLateSetup = true;
+        }
+
+        void FixedUpdate()
+        {
+            if (runLateSetup) {
+                runLateSetup = false;
+                Setup(true);
+            }
         }
 
         private void Setup(bool late)

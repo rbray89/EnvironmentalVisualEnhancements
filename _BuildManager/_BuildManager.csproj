@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="..\LocalSetup.csproj" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
@@ -98,9 +99,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\KSPResources\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="KSPUtil">
-      <HintPath>..\KSPResources\KSPUtil.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -167,16 +165,17 @@ call "C:\Program Files (x86)\Mono\bin\pdb2mdb.bat" $(TargetFileName)
 xcopy  $(TargetName).pdb "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Plugins\" /eyir
 xcopy  $(TargetFileName).mdb "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Plugins\" /eyir
 
+echo "Copying to KSP install (set in LocalSetup.csproj)..."
 
-xcopy "$(SolutionDir)ContentConfigs\GameData" "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData" /eyir
-xcopy "$(SolutionDir)ContentEVE\GameData" "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData" /eyir
+xcopy "$(SolutionDir)ContentConfigs\GameData" "$(KSPDir)\GameData" /eyir
+xcopy "$(SolutionDir)ContentEVE\GameData" "$(KSPDir)\GameData" /eyir
 
 if $(ConfigurationName) == Release del /s "$(SolutionDir)ContentEVE\*.pdb"
 if $(ConfigurationName) == Release del /s "$(SolutionDir)ContentEVE\*.mdb"
 if $(ConfigurationName) == Release del /s "$(SolutionDir)\*.zip"
-if $(ConfigurationName) == Release 7z a -tzip "$(SolutionDir)$(PlatformName)-Configs-Release.zip" "$(SolutionDir)ContentConfigs\GameData"
-if $(ConfigurationName) == Release 7z a -tzip "$(SolutionDir)$(PlatformName)-EVE-Release.zip" "$(SolutionDir)ContentEVE\GameData"
-if $(ConfigurationName) == Release 7z a -y -tzip "$(SolutionDir)$(PlatformName)-EVE.zip" "$(SolutionDir)$(PlatformName)-EVE-Release.zip" "$(SolutionDir)$(PlatformName)-Configs-Release.zip"</PostBuildEvent>
+if $(ConfigurationName) == Release "C:\Program Files\7-Zip\7z" a -tzip "$(SolutionDir)$(PlatformName)-Configs-Release.zip" "$(SolutionDir)ContentConfigs\GameData"
+if $(ConfigurationName) == Release "C:\Program Files\7-Zip\7z" a -tzip "$(SolutionDir)$(PlatformName)-EVE-Release.zip" "$(SolutionDir)ContentEVE\GameData"
+if $(ConfigurationName) == Release "C:\Program Files\7-Zip\7z" a -y -tzip "$(SolutionDir)$(PlatformName)-EVE.zip" "$(SolutionDir)$(PlatformName)-EVE-Release.zip" "$(SolutionDir)$(PlatformName)-Configs-Release.zip"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

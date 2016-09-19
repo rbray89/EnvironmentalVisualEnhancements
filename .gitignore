@@ -224,3 +224,11 @@ pip-log.txt
 #Shaders
 ContentEVE/GameData/EnvironmentalVisualEnhancements/Shaders/*
 
+Source Textures/Atmosphere/Textures/.autosave/UVNoise.sbs
+ContentEVE/GameData/EnvironmentalVisualEnhancements/eveshaders-*.ksp
+ShaderLoader/AssetBundles/eveshaders*
+ShaderLoader/AssetBundles/AssetBundles*
+ShaderLoader/Shaders/Library
+ShaderLoader/Shaders/ProjectSettings
+ShaderLoader/Shaders/Temp
+*.zip
