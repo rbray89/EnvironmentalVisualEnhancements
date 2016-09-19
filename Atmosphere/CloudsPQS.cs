@@ -389,8 +389,8 @@ namespace Atmosphere
             mainMenuLayer = null;
             layerVolume = null;
             volumeApplied = false;
-            this.sphere = null;
             this.enabled = false;
+            this.sphere = null;
             this.transform.parent = null;
             GameEvents.OnMapExited.Remove(ExitMapView);
             GameEvents.onGameSceneLoadRequested.Remove(SceneLoaded);
