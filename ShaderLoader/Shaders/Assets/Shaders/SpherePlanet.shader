@@ -13,7 +13,7 @@ Shader "EVE/Planet" {
 		_DetailOffset ("Detail Offset", Vector) = (.5,.5,0,0)
 		_DetailVertScale ("Detail Scale", Range(0,1000)) = 200
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
-		_MinLight ("Minimum Light", Range(0,1)) = .5
+		_MinLight ("Minimum Light", Range(0,1)) = 0
 		_Albedo ("Albedo Index", Range(0,5)) = 1.2
 		_CityOverlayTex ("Overlay (RGB)", 2D) = "white" {}
 		_CityOverlayDetailScale ("Overlay Detail Scale", Range(0,1000)) = 80

@@ -20,7 +20,7 @@ namespace Atmosphere
         [ConfigItem]
         float _FalloffScale = 3f;
         [ConfigItem]
-        float _MinLight = .5f;
+        float _MinLight = 0f;
         [ConfigItem, InverseScaled]
         float _RimDist = 0.0001f;
         [ConfigItem, InverseScaled]

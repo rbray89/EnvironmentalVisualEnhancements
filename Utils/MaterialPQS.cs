@@ -160,6 +160,7 @@ namespace Utils
             if(body != null && FlightGlobals.currentMainBody != body)
             {
                 GameObject.DestroyImmediate(this);
+                return;
             }
             
             Camera cam = Camera.current;
@@ -193,10 +194,11 @@ namespace Utils
             DeferredRenderer dr = go.GetComponents<DeferredRenderer>().FirstOrDefault(r => r.Material == material);
             if (dr == null )
             {
-                //Debug.Log("r: " + go.name);
                 Renderer r = go.GetComponent<Renderer>();
                 if (r != null && r.GetType() == typeof(MeshRenderer))
                 {
+                    if (r.name == "beat_up_tracking_dish") // No idea why this object causes a crash.
+                        return;
                     dr = go.AddComponent<DeferredRenderer>();
                     dr.Material = material;
                     dr.IncludeTransparent = includeTransparent;

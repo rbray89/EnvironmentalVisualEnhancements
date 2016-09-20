@@ -10,7 +10,7 @@ Shader "EVE/Ocean" {
 		_DetailTex ("Detail (RGB)", 2D) = "white" {}
 		_DetailScale ("Detail Scale", Range(0,1000)) = 200
 		_DetailDist ("Detail Distance", Range(0,1)) = 0.00875
-		_MinLight ("Minimum Light", Range(0,1)) = .5
+		_MinLight ("Minimum Light", Range(0,1)) = 0
 		_LightPower ("LightPower", Float) = 1.75
 		_PlanetOpacity ("PlanetOpacity", Float) = 1
 		_PlanetOrigin ("Planet Center", Vector) = (0,0,0,1)

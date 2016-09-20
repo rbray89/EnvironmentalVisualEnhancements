@@ -13,7 +13,7 @@ Shader "EVE/Cloud" {
 		_UVNoiseScale("UV Noise Scale", Range(0,0.1)) = 0.01
 		_UVNoiseStrength("UV Noise Strength", Range(0,0.1)) = 0.002
 		_UVNoiseAnimation("UV Noise Animation", Vector) = (0.002,0.001,0)
-		_MinLight("Minimum Light", Range(0,1)) = .5
+		_MinLight("Minimum Light", Range(0,1)) = 0
 		_DistFade("Fade Distance", Range(0,100)) = 10
 		_DistFadeVert("Fade Scale", Range(0,1)) = .002
 		_RimDist("Rim Distance", Range(0,1)) = 1
@@ -175,18 +175,18 @@ Shader "EVE/Cloud" {
 
 					//lighting
 					half transparency = color.a;
-					color = SpecularColorLight(_WorldSpaceLightPos0, IN.viewDir, IN.worldNormal, color, 0, 0, LIGHT_ATTENUATION(IN));
-					color *= Terminator(normalize(_WorldSpaceLightPos0), IN.worldNormal);
-					color.a = transparency;
+					half4 scolor = SpecularColorLight(_WorldSpaceLightPos0, IN.viewDir, IN.worldNormal, color, 0, 0, LIGHT_ATTENUATION(IN));
+					scolor *= Terminator(normalize(_WorldSpaceLightPos0), IN.worldNormal);
+					scolor.a = transparency;
 #ifdef SOFT_DEPTH_ON
 					float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.projPos)));
 					depth = LinearEyeDepth(depth);
 					float partZ = IN.projPos.z;
 					float fade = saturate(_InvFade * (depth - partZ));
-					color.a *= fade;
+					scolor.a *= fade;
 #endif
-					color.rgb *= MultiBodyShadow(IN.worldVert, _SunRadius, _SunPos, _ShadowBodies);
-					OUT.color = color;
+					scolor.rgb *= MultiBodyShadow(IN.worldVert, _SunRadius, _SunPos, _ShadowBodies);
+					OUT.color = lerp(scolor, color, _MinLight);
 					
 					float depthWithOffset = IN.projPos.z;
 #ifndef WORLD_SPACE_ON
