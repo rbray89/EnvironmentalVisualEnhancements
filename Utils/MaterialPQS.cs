@@ -195,7 +195,7 @@ namespace Utils
             {
                 //Debug.Log("r: " + go.name);
                 Renderer r = go.GetComponent<Renderer>();
-                if (r != null && r.GetType() != typeof(ParticleSystemRenderer))
+                if (r != null && r.GetType() == typeof(MeshRenderer))
                 {
                     dr = go.AddComponent<DeferredRenderer>();
                     dr.Material = material;

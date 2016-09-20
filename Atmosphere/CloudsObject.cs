@@ -28,7 +28,7 @@ namespace Atmosphere
         [ConfigItem, InverseScaled]
         float _DistFade = 1.0f;
         [ConfigItem, InverseScaled]
-        float _DistFadeVert = 0.00004f;
+        float _DistFadeVert = 0.000085f;
         [ConfigItem]
         float _UVNoiseScale = 0.01f;
         [ConfigItem]
