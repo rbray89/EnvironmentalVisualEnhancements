@@ -22,7 +22,7 @@ namespace _BuildManager
             String location = Path.GetDirectoryName(buildManager.Location);
             List<AssemblyName> assemblies = AppDomain.CurrentDomain.GetAssemblies().Where(x => Path.GetDirectoryName(x.Location) == location).Select(x => x.GetName()).ToList();
 
-            String versionInfo = "EVE Version Info:\n";
+            String versionInfo = "[EVE] Version Info:\n";
             foreach (AssemblyName assembly in assemblies)
             {
                 versionInfo+=assembly.Name + ", " + assembly.Version.ToString() + "\n";

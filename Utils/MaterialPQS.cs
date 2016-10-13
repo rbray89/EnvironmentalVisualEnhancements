@@ -257,7 +257,7 @@ namespace Utils
 
         public Material Apply(CelestialBody cb, MaterialManager mat, Shader shader, bool updateOrigin, bool subPQS)
         {
-            KSPLog.print("Applying PQS Material Manager!");
+            KSPLog.print("[EVE] Applying PQS Material Manager!");
             material = new Material( shader);
             if (mat != null)
             {
@@ -275,7 +275,7 @@ namespace Utils
             }
             else
             {
-                KSPLog.print("No PQS!");
+                KSPLog.print("[EVE] No PQS!");
             }
             if (pqs != null)
             {
@@ -450,7 +450,7 @@ namespace Utils
 
         public void Remove()
         {
-            KSPLog.print("Removing PQS Material Manager!");
+            KSPLog.print("[EVE] Removing PQS Material Manager!");
 
             RemoveFromPQSCities();
             if (this.sphere != null && this.sphere.quads != null)

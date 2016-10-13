@@ -47,7 +47,7 @@ namespace ShaderLoader
 
         void AssetLoaded(AssetLoader.Loader loader)
         {
-            KSPLog.print("Loading assets for EVE - "+ loader.definitions.Length+" defs of "+ loader.objects .Length+ " objects");
+            KSPLog.print("[EVE] Loading assets - "+ loader.definitions.Length+" defs of "+ loader.objects .Length+ " objects");
 
             if (shaderDictionary == null) {
                 // Add all other shaders
@@ -76,13 +76,13 @@ namespace ShaderLoader
 
             for (var i=0; i<AssetLoader.LoadedBundleDefinitions.Count; ++i) {
                 if (AssetLoader.LoadedBundleDefinitions[i].name == ShaderBundleName()) {
-                    KSPLog.print("Loading AssetBundle " + AssetLoader.LoadedBundleDefinitions[i].name);
+                    KSPLog.print("[EVE] Loading AssetBundle " + AssetLoader.LoadedBundleDefinitions[i].name);
                     var bundle = AssetLoader.LoadedBundles[i];
                     // No performance benefit from using ASync version of this,
                     // and sometimes it too only returns 1 shader (maybe same bug KSP hits?)
                     var shaders = bundle.LoadAllAssets<Shader>();
                     foreach (var shader in shaders) {
-                        KSPLog.print("Loading EVE shader " + shader.name);
+                        KSPLog.print("[EVE] Loading EVE shader " + shader.name);
                         shaderDictionary[shader.name] = shader;
                     }
                     if (onLoaded != null) onLoaded();
@@ -94,14 +94,14 @@ namespace ShaderLoader
         public static Shader FindShader(string name)
         {
             if (shaderDictionary == null) {
-                KSPLog.print("Trying to find shader before assets loaded");
+                KSPLog.print("[EVE] Trying to find shader before assets loaded");
                 return null;
             }
             if (shaderDictionary.ContainsKey(name))
             {
                 return shaderDictionary[name];
             }
-            KSPLog.print("Could not find shader " + name);
+            KSPLog.print("[EVE] Could not find shader " + name);
             return null;
         }
     }
