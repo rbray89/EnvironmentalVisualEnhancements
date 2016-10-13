@@ -19,7 +19,9 @@ Shader "EVE/CloudShadow" {
 		_PlanetRadius("Planet Radius", Float) = 1
 		_ShadowFactor("Shadow Factor", Float) = 1
 	}
+
 	SubShader{
+		Tags{ "Queue" = "Geometry+500" "IgnoreProjector" = "True" "RenderType" = "Transparent" }
 		Pass {
 			Blend Zero SrcColor
 			ZWrite Off

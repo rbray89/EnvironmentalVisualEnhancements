@@ -160,7 +160,6 @@ namespace Atmosphere
                 ShadowProjector.transform.parent = celestialBody.transform;
                 ShadowProjector.material = new Material(CloudShadowShader);
                 shadowMaterial.ApplyMaterialProperties(ShadowProjector.material);
-                ShadowProjector.material.renderQueue = (int)Tools.Queue.Geometry + 500;
             }
 
 
