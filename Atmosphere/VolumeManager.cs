@@ -31,7 +31,7 @@ namespace Atmosphere
         {
             Magnitude = cloudSphereRadius;
             Vector3 pos = Vector3.up * Magnitude;
-            translator = new GameObject();
+            translator = new GameObject("VolumeManager");
             Center = translator.transform;
             Center.localScale = Vector3.one;
             Center.parent = transform;

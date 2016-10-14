@@ -151,7 +151,7 @@ namespace Atmosphere
 
             if (shadowMaterial != null)
             {
-                ShadowProjectorGO = new GameObject();
+                ShadowProjectorGO = new GameObject("ShadowProjector");
                 ShadowProjector = ShadowProjectorGO.AddComponent<Projector>();
                 ShadowProjector.nearClipPlane = 10;
                 ShadowProjector.fieldOfView = 60;

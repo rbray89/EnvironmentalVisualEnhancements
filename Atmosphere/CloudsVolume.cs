@@ -87,7 +87,7 @@ namespace Atmosphere
             material.ApplyMaterialProperties(ParticleMaterial);
             ParticleMaterial.EnableKeyword("SOFT_DEPTH_ON");
 
-            volumeHolder = new GameObject();
+            volumeHolder = new GameObject("CloudsVolume");
             //Add the renderer here so othe rentities (shadows)
             //can easily access it.
             Renderer r = volumeHolder.AddComponent<MeshRenderer>();

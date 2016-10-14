@@ -16,7 +16,7 @@ namespace Atmosphere
 
         protected override void ApplyConfigNode(ConfigNode node)
         {
-            GameObject go = new GameObject();
+            GameObject go = new GameObject("CloudsManager");
             CloudsObject newObject = go.AddComponent<CloudsObject>();
             go.transform.parent = Tools.GetCelestialBody(node.GetValue(ConfigHelper.BODY_FIELD)).bodyTransform;
             newObject.LoadConfigNode(node);
