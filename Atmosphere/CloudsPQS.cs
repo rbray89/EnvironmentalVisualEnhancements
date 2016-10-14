@@ -229,21 +229,24 @@ namespace Atmosphere
                     {
                         if (FlightCamera.fetch != null)
                         {
-                            layerVolume.UpdatePos(FlightCamera.fetch.mainCamera.transform.position,
-                                                   world2SphereMatrix,
-                                                   mainRotationQ,
-                                                   detailRotationQ,
-                                                   mainRotationMatrix,
-                                                   detailRotationMatrix);
+                            var inRange = Mathf.Abs(FlightCamera.fetch.cameraAlt - layer2D.Altitude()) < layerVolume.VisibleRange();
+                            if (inRange != layerVolume.enabled)
+                                CloudsManager.Log((inRange ? "Enable" : "Disable")+" clouds when camera: " + FlightCamera.fetch.cameraAlt + " layer: " + layer2D.Altitude());
+                            if (inRange) {
+                                layerVolume.enabled = true;
+                                layerVolume.UpdatePos(FlightCamera.fetch.mainCamera.transform.position,
+                                                       world2SphereMatrix,
+                                                       mainRotationQ,
+                                                       detailRotationQ,
+                                                       mainRotationMatrix,
+                                                       detailRotationMatrix);
+                            } else {
+                                layerVolume.enabled = false;
+                            }
                         }
                         else
                         {
-                            layerVolume.UpdatePos(this.sphere.target.position,
-                                                   world2SphereMatrix,
-                                                   mainRotationQ,
-                                                   detailRotationQ,
-                                                   mainRotationMatrix,
-                                                   detailRotationMatrix);
+                            layerVolume.enabled = false;
                         }
                     }
                 }

@@ -40,7 +40,10 @@ namespace Atmosphere
         [ConfigItem, Tooltip("max x,y,z translation of particle")]
         Vector3 maxTranslation = new Vector3(0, 0, 0);
         [ConfigItem, Tooltip("[size of cover],[number of divisions (more is denser particles)]")]
-        Vector2 area = new Vector2(24000,4);
+        Vector2 area = new Vector2(24000, 4);
+        [ConfigItem, Tooltip("vertical camera distance from layer where enabled")]
+        float visibleRange = 10000f;
+        public float VisibleRange() { return visibleRange; }
         [ConfigItem]
         float rotationSpeed = 0.002f;
         [ConfigItem]
@@ -73,6 +76,8 @@ namespace Atmosphere
             set
             {
                 _enabled = value;
+                if (volumeManager != null)
+                    volumeManager.Enabled = value;
             }
         }
 

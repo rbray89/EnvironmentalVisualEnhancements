@@ -25,7 +25,7 @@ namespace Atmosphere
         Transform Center;
 
         bool enabled;
-        public bool Enabled { get { return enabled; } set { enabled = value; foreach (VolumeSection vs in VolumeList) { vs.Enabled = value; } } }
+        public bool Enabled { get { return enabled; } set { if (enabled != value) { enabled = value; foreach (VolumeSection vs in VolumeList) { vs.Enabled = value; } } } }
 
         public VolumeManager(float cloudSphereRadius, Transform transform, float radius, int divisions)
         {

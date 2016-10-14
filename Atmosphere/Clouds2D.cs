@@ -78,6 +78,7 @@ namespace Atmosphere
         CelestialBody celestialBody = null;
         Transform scaledCelestialTransform = null;
         float radius;
+        public float Altitude() { return celestialBody == null ? radius : (float)(radius - celestialBody.Radius); }
         float radiusScaleLocal;
         private bool isMainMenu = false;
 
