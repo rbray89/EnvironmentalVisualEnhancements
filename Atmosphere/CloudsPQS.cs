@@ -229,9 +229,9 @@ namespace Atmosphere
                     {
                         if (FlightCamera.fetch != null)
                         {
-                            var inRange = Mathf.Abs(FlightCamera.fetch.cameraAlt - layer2D.Altitude()) < layerVolume.VisibleRange();
+                            var inRange = layer2D == null ? true : Mathf.Abs(FlightCamera.fetch.cameraAlt - layer2D.Altitude()) < layerVolume.VisibleRange();
                             if (inRange != layerVolume.enabled)
-                                CloudsManager.Log((inRange ? "Enable" : "Disable")+" clouds when camera: " + FlightCamera.fetch.cameraAlt + " layer: " + layer2D.Altitude());
+                                CloudsManager.Log((inRange ? "Enable" : "Disable")+" clouds when camera: " + FlightCamera.fetch.cameraAlt + " layer: " + (layer2D == null ? "none" : layer2D.Altitude().ToString()));
                             if (inRange) {
                                 layerVolume.enabled = true;
                                 layerVolume.UpdatePos(FlightCamera.fetch.mainCamera.transform.position,
@@ -246,7 +246,13 @@ namespace Atmosphere
                         }
                         else
                         {
-                            layerVolume.enabled = false;
+                            layerVolume.UpdatePos(this.sphere.target.position,
+                                                       world2SphereMatrix,
+                                                       mainRotationQ,
+                                                       detailRotationQ,
+                                                       mainRotationMatrix,
+                                                       detailRotationMatrix);
+                            layerVolume.enabled = true;
                         }
                     }
                 }
