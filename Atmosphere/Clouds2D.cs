@@ -161,10 +161,13 @@ namespace Atmosphere
                 ShadowProjector.transform.parent = celestialBody.transform;
                 ShadowProjector.material = new Material(CloudShadowShader);
                 shadowMaterial.ApplyMaterialProperties(ShadowProjector.material);
+
+                // Workaround Unity bug (Case 841236) 
+                ShadowProjector.enabled = false;
+                ShadowProjector.enabled = true;
             }
 
 
-            
             Scaled = true;
         }
 
