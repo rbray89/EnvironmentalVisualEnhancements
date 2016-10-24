@@ -7,7 +7,7 @@ class BuildABs {
     {
         // Put the bundles in a folder called "ABs" within the
         // Assets folder.
-        var outDir = "../AssetBundles";
+        var outDir = "ContentEVE/GameData/EnvironmentalVisualEnhancements";
         var opts = BuildAssetBundleOptions.DeterministicAssetBundle
             | BuildAssetBundleOptions.ForceRebuildAssetBundle;
         BuildTarget[] platforms = { BuildTarget.StandaloneWindows, BuildTarget.StandaloneOSXUniversal, BuildTarget.StandaloneLinux };
@@ -17,5 +17,10 @@ class BuildABs {
             var outFile = outDir + "/eveshaders"+ platformExts[i]+".ksp";
             FileUtil.ReplaceFile(outDir + "/eveshaders", outFile);
         }
+        // Delete unused guff
+        FileUtil.DeleteFileOrDirectory(outDir + "/EnvironmentalVisualEnhancements");
+        FileUtil.DeleteFileOrDirectory(outDir + "/EnvironmentalVisualEnhancements.manifest");
+        FileUtil.DeleteFileOrDirectory(outDir + "/eveshaders");
+        FileUtil.DeleteFileOrDirectory(outDir + "/eveshaders.manifest");
     }
 }

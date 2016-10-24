@@ -232,3 +232,6 @@ ShaderLoader/Shaders/Temp
 
 #ZIP Distributions
 *.zip
+Library
+ProjectSettings
+Temp
