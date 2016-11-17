@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2015
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnvironmentalVisualEnhancements.CSharp.Editor", "EnvironmentalVisualEnhancements.CSharp.Editor.csproj", "{4B25B914-B753-E629-1177-E1DAB57F7344}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityLights", "CityLights\CityLights.csproj", "{C0D6B86D-11B6-4ABB-8517-877C1721E8A2}"
@@ -24,6 +26,11 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atmosphere", "Atmosphere\Atmosphere.csproj", "{8DF6A385-18E6-4E76-A060-4C3847CA3046}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PartFX", "PartFX\PartFX.csproj", "{08C5F3E9-1567-4679-ACA2-360351B636BD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5010C998-1071-4CDE-A4DE-0386FF22417C}"
+	ProjectSection(SolutionItems) = preProject
+		LocalSetup.csproj = LocalSetup.csproj
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
