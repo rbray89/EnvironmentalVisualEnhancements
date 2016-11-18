@@ -87,7 +87,6 @@ namespace CityLights
 
         public void Apply()
         {
-            
             CelestialBody celestialBody = Tools.GetCelestialBody(body);
             if (celestialBody != null)
             {
@@ -129,10 +128,6 @@ namespace CityLights
             ApplyToMainMenu();
 
             GameEvents.onGameSceneLoadRequested.Add(SceneLoaded);
-            if (HighLogic.LoadedScene == GameScenes.MAINMENU)
-            {
-                ApplyToMainMenu();
-            }
         }
 
         private void SceneLoaded(GameScenes scene)
