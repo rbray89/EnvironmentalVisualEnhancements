@@ -87,9 +87,9 @@ namespace Atmosphere
             celestialBody = Tools.GetCelestialBody(body);
             scaledCelestialTransform = Tools.GetScaledTransform(body);
             
-            GameObject go = new GameObject("CloudsObject");
+            GameObject go = new GameObject();
             cloudsPQS = go.AddComponent<CloudsPQS>();
-            go.name = this.name;
+            go.name = "EVE Clouds: "+ this.name;
             Matrix4x4 rotationAxis = new Matrix4x4();
             rotationAxis.SetRow(0, rotationAxis0);
             rotationAxis.SetRow(1, rotationAxis1);

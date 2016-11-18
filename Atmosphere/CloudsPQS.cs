@@ -303,7 +303,7 @@ namespace Atmosphere
                 
                 if (layer2D != null)
                 {
-                    this.layer2D.Apply(celestialBody, scaledCelestialTransform, cloudsMaterial, (float)radius);
+                    this.layer2D.Apply(celestialBody, scaledCelestialTransform, cloudsMaterial, this.name, (float)radius);
                 }
 
                 if (!pqs.isActive || HighLogic.LoadedScene == GameScenes.TRACKSTATION)

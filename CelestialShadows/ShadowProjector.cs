@@ -28,7 +28,8 @@ namespace CelestialShadows
         public ShadowProjector()
         {
             projectorGO = new GameObject();
-            
+            projectorGO.name = "EVE Shadow Projector";
+
             projector = projectorGO.AddComponent<Projector>();
             projector.nearClipPlane = 10;
             projector.fieldOfView = 60;

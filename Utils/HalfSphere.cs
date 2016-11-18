@@ -13,6 +13,7 @@ namespace Utils
         public HalfSphere(float radius, ref Material material, Shader shader)
         {
             meshContainer = new GameObject();
+            meshContainer.name = "EVE HalfSphere";
 
             MeshFilter filter = meshContainer.AddComponent<MeshFilter>();
             Mesh mesh = filter.mesh;

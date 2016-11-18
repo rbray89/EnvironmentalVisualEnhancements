@@ -163,6 +163,7 @@ namespace CelestialShadows
                 {
                     shadowMat = new Material(ShadowShader);
                     GameObject go = new GameObject();
+                    go.name = "EVE Shadows";
                     materialPQS = go.AddComponent<MaterialPQS>();
                     localShadowMat = materialPQS.Apply(celestialBody, null, ShadowShader, false, true);
 

@@ -300,6 +300,7 @@ namespace Utils
             if(subPQS && this.sphere != null && this.sphere.ChildSpheres != null && this.sphere.ChildSpheres.Length > 0)
             {
                 GameObject go = new GameObject();
+                go.name = "EVE Material PQS";
                 MaterialPQS ChildPQS = go.AddComponent<MaterialPQS>();
                 ChildPQS.updateOrigin = false;
                 ChildPQS.subPQS = false;

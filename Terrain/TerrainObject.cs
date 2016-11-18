@@ -86,6 +86,7 @@ namespace Terrain
         public void Apply()
         {
             GameObject go = new GameObject();
+            go.name = "EVE Terrain";
             terrainPQS = go.AddComponent<TerrainPQS>();
             terrainPQS.Apply( body, terrainMaterial, oceanMaterial );
         }

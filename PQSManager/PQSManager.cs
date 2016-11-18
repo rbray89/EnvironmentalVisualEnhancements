@@ -17,6 +17,7 @@ namespace PQSManager
         protected override void ApplyConfigNode(ConfigNode node)
         {
             GameObject go = new GameObject();
+            go.name = "EVE PQS";
             PQSWrapper newObject = go.AddComponent<PQSWrapper>();
             go.transform.parent = Tools.GetCelestialBody(node.GetValue(ConfigHelper.BODY_FIELD)).bodyTransform;
             go.transform.localPosition = Vector3.zero;

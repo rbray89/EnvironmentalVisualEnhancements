@@ -92,6 +92,7 @@ namespace CityLights
             if (celestialBody != null)
             {
                 GameObject go = new GameObject();
+                go.name = "EVE City Lights";
                 materialPQS = go.AddComponent<MaterialPQS>();
                 macroMat = materialPQS.Apply(celestialBody, cityLightsMaterial, ShaderLoaderClass.FindShader("EVE/TerrainCityLight"), true, false);
                 macroMat.name = materialName;

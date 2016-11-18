@@ -90,7 +90,18 @@ namespace Atmosphere
             mainMenu.macroCloudMaterial = this.macroCloudMaterial;
             mainMenu.shadowMaterial = this.shadowMaterial;
             mainMenu.isMainMenu = true;
-            mainMenu.Apply(this.celestialBody, mainMenuBody.transform, this.cloudsMat, this.radius, (Tools.Layer)mainMenuBody.layer);
+
+            if (mainMenuBody.name.EndsWith("(Clone)")) {
+                // There is a race condition with Kopernicus. Sometimes, it
+                // will have cloned a body that already had clouds. Hide old clouds.
+                for (var c=0; c<mainMenuBody.transform.childCount; ++c) {
+                    var child = mainMenuBody.transform.GetChild(c).gameObject;
+                    if (child.name.StartsWith("EVE Clouds:") && child.name.EndsWith("(Clone)"))
+                        child.SetActive(false);
+                }
+            }
+
+            mainMenu.Apply(this.celestialBody, mainMenuBody.transform, this.cloudsMat, this.CloudMesh.name, this.radius, (Tools.Layer)mainMenuBody.layer);
             
             return mainMenu;
         }
@@ -134,7 +145,7 @@ namespace Atmosphere
                 }
             } }
 
-        internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, CloudsMaterial cloudsMaterial, float radius, Tools.Layer layer = Tools.Layer.Scaled)
+        internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, CloudsMaterial cloudsMaterial, string name, float radius, Tools.Layer layer = Tools.Layer.Scaled)
         {
             CloudsManager.Log("Applying 2D clouds...");
             Remove();
@@ -142,6 +153,7 @@ namespace Atmosphere
             this.scaledCelestialTransform = scaledCelestialTransform;
             HalfSphere hp = new HalfSphere(radius, ref CloudMaterial, CloudShader);
             CloudMesh = hp.GameObject;
+            CloudMesh.name = name;
             CloudMaterial.name = "Clouds2D";
             this.radius = radius;
             macroCloudMaterial.Radius = radius;

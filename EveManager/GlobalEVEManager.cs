@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using Utils;
+using KSP.UI.Screens;
 
 namespace EVEManager
 {
@@ -44,7 +45,49 @@ namespace EVEManager
 
             if (ShaderLoader.ShaderLoaderClass.loaded) {
                 Setup(false);
-                waitToRunLateSetup = 1;
+                waitToRunLateSetup = 5; // Wait for Kopernicus to clone it.
+            }
+
+            GameEvents.onGUIApplicationLauncherReady.Add(AddButton);
+            GameEvents.onGUIApplicationLauncherUnreadifying.Add(RemoveButton);
+        }
+
+        static ApplicationLauncherButton button = null;
+
+        void AddButton()
+        {
+            if (button) return;
+
+            var launcher = ApplicationLauncher.Instance;
+            var buttonTexture = GameDatabase.Instance.GetTexture("EnvironmentalVisualEnhancements/button", false);
+
+            button = launcher.AddModApplication(
+                OpenEditor,
+                CloseEditor,
+                null,
+                null,
+                null,
+                null,
+                ApplicationLauncher.AppScenes.TRACKSTATION | ApplicationLauncher.AppScenes.SPACECENTER,
+                buttonTexture);
+        }
+
+        private void OpenEditor()
+        {
+            useEditor = true;
+        }
+
+        private void CloseEditor()
+        {
+            useEditor = false;
+        }
+
+        void RemoveButton(GameScenes data)
+        {
+            if (button) {
+                var launcher = ApplicationLauncher.Instance;
+                launcher.RemoveModApplication(button);
+                button = null;
             }
         }
 
