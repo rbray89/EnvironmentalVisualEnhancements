@@ -143,7 +143,8 @@ namespace EVEManager
             {
                 _mainWindowRect.width = 400;
                 _mainWindowRect.height = 720;
-                _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "EVE Manager");
+                var versionInfo = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "EVE "+versionInfo+" Config Editor");
             }
         }
 

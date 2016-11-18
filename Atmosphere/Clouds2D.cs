@@ -96,7 +96,7 @@ namespace Atmosphere
                 // will have cloned a body that already had clouds. Hide old clouds.
                 for (var c=0; c<mainMenuBody.transform.childCount; ++c) {
                     var child = mainMenuBody.transform.GetChild(c).gameObject;
-                    if (child.name.StartsWith("EVE Clouds:") && child.name.EndsWith("(Clone)"))
+                    if (child.name.StartsWith("EVE ") && child.name.EndsWith("(Clone)"))
                         child.SetActive(false);
                 }
             }
@@ -164,7 +164,7 @@ namespace Atmosphere
 
             if (shadowMaterial != null)
             {
-                ShadowProjectorGO = new GameObject("ShadowProjector");
+                ShadowProjectorGO = new GameObject("EVE ShadowProjector");
                 ShadowProjector = ShadowProjectorGO.AddComponent<Projector>();
                 ShadowProjector.nearClipPlane = 10;
                 ShadowProjector.fieldOfView = 60;
