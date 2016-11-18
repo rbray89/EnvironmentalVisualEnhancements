@@ -10,84 +10,48 @@ using KSPAssets.Loaders;
 
 namespace ShaderLoader
 {
-    [KSPAddon(KSPAddon.Startup.MainMenu, true)]
+    [KSPAddon(KSPAddon.Startup.Instantly, true)]
     public class ShaderLoaderClass : MonoBehaviour
     {
         static Dictionary<string, Shader> shaderDictionary = null;
-        public delegate void OnLoaded();
-        public static OnLoaded onLoaded;
+        public static bool loaded = false;
 
         private void Start()
         {
-            if (shaderDictionary == null)
-                StartCoroutine(LoadWhenReady());
+            LoadShaders();
         }
 
-        string ShaderBundleName()
+        private void LoadShaders()
         {
-            var r = "EnvironmentalVisualEnhancements/eveshaders";
-
-            if (Application.platform == RuntimePlatform.LinuxPlayer)
-                r += "-linux";
-            else if (Application.platform == RuntimePlatform.OSXPlayer)
-                r += "-macosx";
-            else
-                r += "-windows";
-            return r;
-        }
-
-        IEnumerator LoadWhenReady()
-        {
-            while (!AssetLoader.Ready) {
-                yield return null;
-            }
-            var defs = AssetLoader.GetAssetDefinitionsWithType(ShaderBundleName(), "Shader");
-            AssetLoader.LoadAssets(AssetLoaded, defs);
-        }
-
-        void AssetLoaded(AssetLoader.Loader loader)
-        {
-            KSPLog.print("[EVE] Loading assets - "+ loader.definitions.Length+" defs of "+ loader.objects .Length+ " objects");
-
             if (shaderDictionary == null) {
-                // Add all other shaders
                 shaderDictionary = new Dictionary<string, Shader>();
+
+                // Add all other shaders
                 Shader[] shaders = Resources.FindObjectsOfTypeAll<Shader>();
                 foreach (Shader shader in shaders) {
                     shaderDictionary[shader.name] = shader;
                 }
-            }
 
-            /* Seems KSP AssetLoader is currently buggy, see http://forum.kerbalspaceprogram.com/index.php?/topic/138973-the-assetbundle-name-cant-be-loaded/
-            ** Only the first object is valid currently.
-            ** Instead, we load the assets from the bundle directly.
-            **
-            for (int i = 0; i < loader.definitions.Length; i++) {
-                var def = loader.definitions[i];
-                UnityEngine.Object o = loader.objects[i];
-                Debug.Log("  Object " + i + ": " + def.name + " : " + " " + def.type + " : " + def.ToString() + " : " + def.autoLoad + " o=" + o);
-                Shader shader = o as Shader;
-                if (shader != null) {
-                    KSPLog.print("Loading shader " + shader.name);
-                    shaderDictionary[shader.name] = shader;
-                }
-            }
-            */
-
-            for (var i=0; i<AssetLoader.LoadedBundleDefinitions.Count; ++i) {
-                if (AssetLoader.LoadedBundleDefinitions[i].name == ShaderBundleName()) {
-                    KSPLog.print("[EVE] Loading AssetBundle " + AssetLoader.LoadedBundleDefinitions[i].name);
-                    var bundle = AssetLoader.LoadedBundles[i];
-                    // No performance benefit from using ASync version of this,
-                    // and sometimes it too only returns 1 shader (maybe same bug KSP hits?)
-                    var shaders = bundle.LoadAllAssets<Shader>();
-                    foreach (var shader in shaders) {
-                        KSPLog.print("[EVE] Loading EVE shader " + shader.name);
-                        shaderDictionary[shader.name] = shader;
+                using (WWW www = new WWW("file://" + KSPUtil.ApplicationRootPath + "GameData/EnvironmentalVisualEnhancements/eveshaders.bundle")) {
+                    if (www.error != null) {
+                        KSPLog.print("[EVE] eveshaders.bundle not found!");
+                        return;
                     }
-                    if (onLoaded != null) onLoaded();
-                    break;
+
+                    AssetBundle bundle = www.assetBundle;
+
+                    shaders = bundle.LoadAllAssets<Shader>();
+
+                    foreach (Shader shader in shaders) {
+                        KSPLog.print("[EVE] Shader " + shader.name + " loaded");
+                        shaderDictionary.Add(shader.name, shader);
+                    }
+
+                    bundle.Unload(false);
+                    www.Dispose();
                 }
+
+                loaded = true;
             }
         }
 

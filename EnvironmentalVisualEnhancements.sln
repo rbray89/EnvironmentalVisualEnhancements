@@ -27,7 +27,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Atmosphere", "Atmosphere\At
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PartFX", "PartFX\PartFX.csproj", "{08C5F3E9-1567-4679-ACA2-360351B636BD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5010C998-1071-4CDE-A4DE-0386FF22417C}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{4E64AC5F-4DB3-4A89-8BED-6D14461542CE}"
 	ProjectSection(SolutionItems) = preProject
 		LocalSetup.csproj = LocalSetup.csproj
 	EndProjectSection

@@ -24,6 +24,8 @@ namespace EVEManager
 
         private Texture2D ToolTipBackground;
 
+        int waitToRunLateSetup = 0;
+
         private void Awake()
         {
             useEditor = false;
@@ -39,24 +41,20 @@ namespace EVEManager
             {
                 Managers = EVEManagerBase.GetManagers();
             }
-            
 
-            ShaderLoader.ShaderLoaderClass.onLoaded += ShadersLoaded;
-        }
-
-        bool runLateSetup = false;
-
-        void ShadersLoaded()
-        {
-            Setup(false);
-            runLateSetup = true;
+            if (ShaderLoader.ShaderLoaderClass.loaded) {
+                Setup(false);
+                waitToRunLateSetup = 1;
+            }
         }
 
         void FixedUpdate()
         {
-            if (runLateSetup) {
-                runLateSetup = false;
-                Setup(true);
+            if (waitToRunLateSetup > 0) {
+                waitToRunLateSetup--;
+                if (waitToRunLateSetup == 0) {
+                    Setup(true);
+                }
             }
         }
 

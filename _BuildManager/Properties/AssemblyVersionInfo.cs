@@ -14,5 +14,3 @@ using System.Runtime.InteropServices;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.2.1.1")] // KSP version with EVE release number appended.
-[assembly: AssemblyFileVersion("1.2.1.*")] // KSP version with Build/rev numbers appeneded.
-

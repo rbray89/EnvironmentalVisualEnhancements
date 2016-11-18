@@ -135,7 +135,7 @@ namespace Atmosphere
                 }
                 else if (go == null)
                 {
-                    CloudsManager.Log("Cannot Find to apply to main Menu!");
+                    CloudsManager.Log("Cannot find "+body+" to apply to main Menu!");
                 }
                 else if (mainMenuBodyTransform == go.transform)
                 {
