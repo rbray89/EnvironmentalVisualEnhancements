@@ -254,8 +254,7 @@ namespace Atmosphere
                 ShadowProjectorGO.layer = (int)layer;
                 if (layer == Tools.Layer.Local)
                 {
-                    ShadowProjector.ignoreLayers = ~(Tools.Layer.Default.Mask() |
-                                                     Tools.Layer.TransparentFX.Mask() |
+                    ShadowProjector.ignoreLayers = ~(Tools.Layer.Default.Mask() | // Note: *NOT* TransparentFX, otherwise landing gear lights etc. look terrible.
                                                      Tools.Layer.Water.Mask() |
                                                      Tools.Layer.Local.Mask() |
                                                      Tools.Layer.Kerbals.Mask() |
