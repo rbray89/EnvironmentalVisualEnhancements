@@ -14,6 +14,26 @@ namespace _BuildManager
         private void Awake()
         {
             logVersion();
+
+            AddLoadingTips();
+        }
+
+        private void AddLoadingTips()
+        {
+            var loadingScreens = LoadingScreen.Instance.Screens;
+            if (loadingScreens.Count > 1) {
+                // The tips appear on the "second" loading screen, after the initial "Loading..." screen.
+                int tipScreen = 1;
+                var tips = loadingScreens[tipScreen].tips;
+                string[] newTips = {
+                    "Inserting Head Into Clouds...", // How KSP makes us all feel.
+                    "Luminously Urbanizing...", // City lights
+                    "Searching for the Aurora Borealis...", "Searching for the Aurora Australis..." // You'll find them in SVE!
+                };
+                Array.Resize(ref tips, tips.Length + newTips.Length);
+                newTips.CopyTo(tips, tips.Length - newTips.Length);
+                loadingScreens[tipScreen].tips = tips;
+            }
         }
 
         private void logVersion()

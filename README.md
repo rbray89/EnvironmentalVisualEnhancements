@@ -3,9 +3,16 @@ EnvironmentalVisualEnhancements
 
 Visual enhancements including clouds, lights, etc.
 
-Developers: edit the LocalSetup.csproj to set your KSP directory.
+Developer Notes
+------------------------
+
+* Edit the LocalSetup.csproj to set your KSP directory.
+
+* To rebuild shader asset bundles, open the directory from Unity 5.4 and choose "Assets/Build Asset Bundles" menu option.
 
 
+Licenses
+------------
 
 Some portions of this project are under the GNU General Public License (DDS texture loader) 
 and should be distributed as-such. This project was added to replace the functionality of the
