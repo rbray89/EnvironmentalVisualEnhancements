@@ -78,6 +78,7 @@ namespace Atmosphere
         CelestialBody celestialBody = null;
         Transform scaledCelestialTransform = null;
         float radius;
+        float arc;
         public float Altitude() { return celestialBody == null ? radius : (float)(radius - celestialBody.Radius); }
         float radiusScaleLocal;
         private bool isMainMenu = false;
@@ -101,7 +102,7 @@ namespace Atmosphere
                 }
             }
 
-            mainMenu.Apply(this.celestialBody, mainMenuBody.transform, this.cloudsMat, this.CloudMesh.name, this.radius, (Tools.Layer)mainMenuBody.layer);
+            mainMenu.Apply(this.celestialBody, mainMenuBody.transform, this.cloudsMat, this.CloudMesh.name, this.radius, this.arc, (Tools.Layer)mainMenuBody.layer);
             
             return mainMenu;
         }
@@ -145,17 +146,23 @@ namespace Atmosphere
                 }
             } }
 
-        internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, CloudsMaterial cloudsMaterial, string name, float radius, Tools.Layer layer = Tools.Layer.Scaled)
+        internal void Apply(CelestialBody celestialBody, Transform scaledCelestialTransform, CloudsMaterial cloudsMaterial, string name, float radius, float arc, Tools.Layer layer = Tools.Layer.Scaled)
         {
             CloudsManager.Log("Applying 2D clouds...");
             Remove();
             this.celestialBody = celestialBody;
             this.scaledCelestialTransform = scaledCelestialTransform;
-            HalfSphere hp = new HalfSphere(radius, ref CloudMaterial, CloudShader);
-            CloudMesh = hp.GameObject;
+            if (arc == 360) {
+                HalfSphere hp = new HalfSphere(radius, ref CloudMaterial, CloudShader);
+                CloudMesh = hp.GameObject;
+            } else {
+                UVSphere hp = new UVSphere(radius, arc, ref CloudMaterial, CloudShader);
+                CloudMesh = hp.GameObject;
+            }
             CloudMesh.name = name;
             CloudMaterial.name = "Clouds2D";
             this.radius = radius;
+            this.arc = arc;
             macroCloudMaterial.Radius = radius;
             this.cloudsMat = cloudsMaterial;
             this.scaledLayer = layer;
@@ -294,7 +301,13 @@ namespace Atmosphere
         {
             if (rotation != null)
             {
-                CloudMesh.transform.localRotation = rotation;
+                if (arc == 360) {
+                    CloudMesh.transform.localRotation = rotation;
+                } else {
+                    var mat = mainRotationMatrix;
+                    float w = Mathf.Sqrt(1.0f + mat.m00 + mat.m11 + mat.m22) / 2.0f;
+                    CloudMesh.transform.localRotation = new Quaternion((mat.m21 - mat.m12) / (4.0f * w), (mat.m02 - mat.m20) / (4.0f * w), (mat.m10 - mat.m01) / (4.0f * w), w);
+                }
                 if (ShadowProjector != null && Sunlight != null)
                 {
                     Vector3 worldSunDir;
@@ -320,7 +333,15 @@ namespace Atmosphere
                 }
             }
             CloudMaterial.SetVector(ShaderProperties.PLANET_ORIGIN_PROPERTY, CloudMesh.transform.position);
+            CloudMaterial.SetVector(ShaderProperties._UniveralTime_PROPERTY, UniversalTimeVector());
+            
             SetRotations(World2Planet, mainRotationMatrix, detailRotationMatrix);
+        }
+
+        Vector4 UniversalTimeVector()
+        {
+            float ut = (float)(Planetarium.GetUniversalTime() % (float.MaxValue / 2)); // will cause discontinuity every few thousand years.
+            return new Vector4(ut / 20, ut, ut * 2, ut * 3);
         }
 
         private void SetRotations(Matrix4x4 World2Planet, Matrix4x4 mainRotation, Matrix4x4 detailRotation)
@@ -340,7 +361,7 @@ namespace Atmosphere
                     ShadowProjector.material.SetMatrix(ShaderProperties.MAIN_ROTATION_PROPERTY, mainRotation * ShadowProjector.transform.parent.worldToLocalMatrix);
                     ShadowProjector.material.SetVector(ShaderProperties.PLANET_ORIGIN_PROPERTY, ShadowProjector.transform.parent.position);
                 }
-
+                ShadowProjector.material.SetVector(ShaderProperties._UniveralTime_PROPERTY, UniversalTimeVector());
                 ShadowProjector.material.SetMatrix(ShaderProperties.DETAIL_ROTATION_PROPERTY, detailRotation);
             }
         }

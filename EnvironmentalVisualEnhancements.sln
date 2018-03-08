@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2015
+# Visual Studio 2017
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnvironmentalVisualEnhancements.Editor", "EnvironmentalVisualEnhancements.Editor.csproj", "{480C5712-CEDF-11DF-AB75-4CD634FA170D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityLights", "CityLights\CityLights.csproj", "{C0D6B86D-11B6-4ABB-8517-877C1721E8A2}"

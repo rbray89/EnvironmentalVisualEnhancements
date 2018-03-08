@@ -1,4 +1,6 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced '_World2Object' with 'unity_WorldToObject'
 
 Shader "EVE/PlanetCityLight" {
@@ -82,7 +84,7 @@ Shader "EVE/PlanetCityLight" {
 				v2f vert (appdata_t v)
 				{
 					v2f o;
-					o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+					o.pos = UnityObjectToClipPos(v.vertex);
 
 					float3 vertexPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 					o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);

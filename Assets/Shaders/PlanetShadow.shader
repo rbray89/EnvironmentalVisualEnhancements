@@ -1,4 +1,6 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced '_Projector' with 'unity_Projector'
 
 Shader "EVE/PlanetShadow" {
@@ -45,7 +47,7 @@ Shader "EVE/PlanetShadow" {
 			{
 				v2f o;
 				o.posProj = mul(unity_Projector, v.vertex);
-				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.pos = UnityObjectToClipPos(v.vertex);
 
 				o.nDotL = -dot(_SunDir, mul(unity_ObjectToWorld, float4(v.normal,0)).xyz);
 				return o;

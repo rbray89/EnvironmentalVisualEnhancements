@@ -1,4 +1,6 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 Shader "EVE/PlanetLight" {
 	Properties{
@@ -59,7 +61,7 @@ Shader "EVE/PlanetLight" {
 	v2f vert(appdata_t v)
 	{
 		v2f o;
-		o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+		o.pos = UnityObjectToClipPos(v.vertex);
 		o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 		return o;
 	}

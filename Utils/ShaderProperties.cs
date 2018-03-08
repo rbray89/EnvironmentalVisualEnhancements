@@ -43,8 +43,8 @@ namespace Utils
         private static int _SunPos;
         public static int _ShadowBodies_PROPERTY { get { return _ShadowBodies; } }
         private static int _ShadowBodies;
-
-
+        public static int _UniveralTime_PROPERTY { get { return _UniversalTime; } }
+        private static int _UniversalTime;
 
         private void Awake()
         {
@@ -66,6 +66,8 @@ namespace Utils
             _SunRadius = Shader.PropertyToID("_SunRadius");
             _SunPos = Shader.PropertyToID("_SunPos");
             _ShadowBodies = Shader.PropertyToID("_ShadowBodies");
+
+            _UniversalTime = Shader.PropertyToID("_UniversalTime");
         }
     }
 }

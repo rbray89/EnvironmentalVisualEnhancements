@@ -236,3 +236,6 @@ Library
 ProjectSettings
 Temp
 ContentEVE/GameData/EnvironmentalVisualEnhancements/eveshaders.bundle
+/.vs/
+.Backups
+/Source Textures/Atmosphere/Textures/.autosave/

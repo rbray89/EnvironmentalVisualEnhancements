@@ -259,7 +259,7 @@ namespace Atmosphere
             }
         }
 
-        internal void Apply(String body, CloudsMaterial cloudsMaterial, Clouds2D layer2D, CloudsVolume layerVolume, float altitude, Vector3d speed, Vector3d detailSpeed, Vector3 offset, Matrix4x4 rotationAxis, bool killBodyRotation)
+        internal void Apply(String body, CloudsMaterial cloudsMaterial, Clouds2D layer2D, CloudsVolume layerVolume, float altitude, float arc, Vector3d speed, Vector3d detailSpeed, Vector3 offset, Matrix4x4 rotationAxis, bool killBodyRotation)
         {
             this.body = body;
             this.cloudsMaterial = cloudsMaterial;
@@ -296,14 +296,13 @@ namespace Atmosphere
                 this.transform.localScale = Vector3.one;
                 this.radius = (altitude + celestialBody.Radius);
                 
-                
                 double circumference = 2f * Mathf.PI * radius;
                 mainPeriod = -(speed) / circumference;
                 detailPeriod = -(detailSpeed) / circumference;
                 
                 if (layer2D != null)
                 {
-                    this.layer2D.Apply(celestialBody, scaledCelestialTransform, cloudsMaterial, this.name, (float)radius);
+                    this.layer2D.Apply(celestialBody, scaledCelestialTransform, cloudsMaterial, this.name, (float)radius, arc);
                 }
 
                 if (!pqs.isActive || HighLogic.LoadedScene == GameScenes.TRACKSTATION)

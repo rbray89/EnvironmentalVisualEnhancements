@@ -1,3 +1,5 @@
+// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 Shader "EVE/Cloud" {
@@ -13,6 +15,7 @@ Shader "EVE/Cloud" {
 		_UVNoiseScale("UV Noise Scale", Range(0,0.1)) = 0.01
 		_UVNoiseStrength("UV Noise Strength", Range(0,0.1)) = 0.002
 		_UVNoiseAnimation("UV Noise Animation", Vector) = (0.002,0.001,0)
+		_UniversalTime("Universal Time", Vector) = (0,0,0,0)
 		_MinLight("Minimum Light", Range(0,1)) = 0
 		_DistFade("Fade Distance", Range(0,100)) = 10
 		_DistFadeVert("Fade Scale", Range(0,1)) = .002
@@ -108,7 +111,7 @@ Shader "EVE/Cloud" {
 				{
 					v2f o;
 					UNITY_INITIALIZE_OUTPUT(v2f, o);
-					o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+					o.pos = UnityObjectToClipPos(v.vertex);
 
 					float4 vertexPos = mul(unity_ObjectToWorld, v.vertex);
 					float3 origin = mul(unity_ObjectToWorld, float4(0,0,0,1)).xyz;

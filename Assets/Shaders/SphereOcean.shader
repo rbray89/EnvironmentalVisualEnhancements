@@ -1,4 +1,6 @@
-﻿// Upgrade NOTE: commented out 'float4x4 _CameraToWorld', a built-in variable
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Upgrade NOTE: commented out 'float4x4 _CameraToWorld', a built-in variable
 // Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 Shader "EVE/Ocean" {
@@ -86,7 +88,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
 			//+ (1.5*(1+cos(c))*float4(v.normal,0));
 		    float4 vertex = v.vertex;
 			
-			o.pos = mul(UNITY_MATRIX_MVP, vertex).xyzw;
+			o.pos = UnityObjectToClipPos(vertex).xyzw;
 			
 			float3 vertexPos = mul(unity_ObjectToWorld, vertex).xyz;
 			o.viewDist = distance(vertexPos,_WorldSpaceCameraPos);
@@ -204,7 +206,7 @@ Tags { "Queue"="AlphaTest" "RenderType"="TransparentCutout"}
                 {
                     v2f o;
                     
-                    o.pos = mul( UNITY_MATRIX_MVP, v.vertex);
+                    o.pos = UnityObjectToClipPos( v.vertex);
 					o.uv = 0; // I don't know why.
 					o.lightDir = ObjSpaceLightDir(v.vertex).xyz;
 					o.color = v.color;

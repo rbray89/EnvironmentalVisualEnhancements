@@ -1,4 +1,6 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 
 Shader "EVE/Terrain" {
 	Properties {
@@ -113,7 +115,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
 		v2f vert (appdata_t v)
 		{
 			v2f o;
-			o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+			o.pos = UnityObjectToClipPos(v.vertex);
 			
 		   float3 vertexPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 	   	   o.objnormal.w = distance(vertexPos,_WorldSpaceCameraPos);
@@ -264,7 +266,7 @@ Tags { "Queue"="Geometry" "RenderType"="Opaque" }
                 {
                     v2f o;
                     
-                    o.pos = mul( UNITY_MATRIX_MVP, v.vertex);
+                    o.pos = UnityObjectToClipPos( v.vertex);
 					o.uv = 0; // Avoid error I don't understand - WazWaz
 					o.lightDir = ObjSpaceLightDir(v.vertex);
 					o.color = v.color;

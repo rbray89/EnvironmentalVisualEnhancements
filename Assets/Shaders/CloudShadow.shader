@@ -1,4 +1,6 @@
-﻿// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
+﻿// Upgrade NOTE: replaced 'mul(UNITY_MATRIX_MVP,*)' with 'UnityObjectToClipPos(*)'
+
+// Upgrade NOTE: replaced '_Object2World' with 'unity_ObjectToWorld'
 // Upgrade NOTE: replaced '_Projector' with 'unity_Projector'
 
 Shader "EVE/CloudShadow" {
@@ -18,6 +20,8 @@ Shader "EVE/CloudShadow" {
 		_Radius("Radius", Float) = 1
 		_PlanetRadius("Planet Radius", Float) = 1
 		_ShadowFactor("Shadow Factor", Float) = 1
+	
+		_UniversalTime("Universal Time", Vector) = (0,0,0,0)
 	}
 
 	SubShader{
@@ -79,7 +83,7 @@ Shader "EVE/CloudShadow" {
 			{
 				v2f o;
 				o.posProj = mul(unity_Projector, v.vertex);
-				o.pos = mul(UNITY_MATRIX_MVP, v.vertex);
+				o.pos = UnityObjectToClipPos(v.vertex);
 
 				o.worldPos = mul(unity_ObjectToWorld, v.vertex);
 #ifdef WORLD_SPACE_ON
