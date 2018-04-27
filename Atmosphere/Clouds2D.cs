@@ -82,6 +82,9 @@ namespace Atmosphere
         public float Altitude() { return celestialBody == null ? radius : (float)(radius - celestialBody.Radius); }
         float radiusScaleLocal;
         private bool isMainMenu = false;
+        
+        // Used to calculate the scale of the clouds in the mainmenu
+        private const float joolRadius = 6000000f;
 
         private static Shader cloudShader = null;
 
@@ -198,7 +201,7 @@ namespace Atmosphere
             float localScale;
             if (isMainMenu)
             {
-                localScale = worldScale * 10f;
+                localScale = worldScale * (joolRadius / (float) celestialBody.Radius);
             }
             else
             {
