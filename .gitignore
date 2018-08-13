@@ -239,3 +239,8 @@ ContentEVE/GameData/EnvironmentalVisualEnhancements/eveshaders.bundle
 /.vs/
 .Backups
 /Source Textures/Atmosphere/Textures/.autosave/
+/Assets/Bumps/NotAStockNasaCloudMap_*.png
+*.blend?
+/Assets/Skybox.dds
+/Assets/Skybox.mat
+/Assets/Kerbin.jpg
