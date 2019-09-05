@@ -17,6 +17,10 @@ namespace Atmosphere
         Color _Color = 255*Color.white;
         [ConfigItem, Index(1), ValueFilter("isClamped|format|type|alphaMask"), Tooltip("Main texture used with clouds.")]
         TextureWrapper _MainTex;
+        [ConfigItem, ValueFilter("isClamped|format|type"), Tooltip("Normal map texture used with clouds.")]
+        TextureWrapper _BumpMap;
+        [ConfigItem]
+        float _BumpScale = 0.1f;
         [ConfigItem]
         TextureWrapper _DetailTex;
         [ConfigItem]

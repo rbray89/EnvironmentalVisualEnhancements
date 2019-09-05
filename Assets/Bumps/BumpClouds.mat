@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: BumpClouds
+  m_Shader: {fileID: 4800000, guid: 0a3f8bfbe04cb5f45aeb2e114371c690, type: 3}
+  m_ShaderKeywords: _ALPHABLEND_ON _DETAIL_MULX2 _NORMALMAP WORLD_SPACE_OFF
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: dd50daff711900547a0c4f34ae22534c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 64, y: 64}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 86f414e5aad477a4f8ca3dea1809ea4a, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _UVNoiseTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BumpScale: 0.11
+    - _Cutoff: 0.5
+    - _DepthPull: 0.99
+    - _DetailDist: 0.00875
+    - _DetailNormalMapScale: 0.12
+    - _DetailScale: 100
+    - _DistFade: 0.1
+    - _DistFadeVert: 0.002
+    - _DstBlend: 10
+    - _FalloffPow: 0.79
+    - _FalloffScale: 3
+    - _GlossMapScale: 1
+    - _Glossiness: 1
+    - _GlossyReflections: 1
+    - _InvFade: 0.01
+    - _Metallic: 0
+    - _MinLight: 0
+    - _Mode: 2
+    - _OcclusionStrength: 1
+    - _OceanRadius: 63000
+    - _Parallax: 0.005
+    - _RimDist: 1
+    - _RimDistSub: 1.01
+    - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 5
+    - _SunRadius: 1
+    - _UVNoiseScale: 0.01
+    - _UVNoiseStrength: 0.002
+    - _UVSec: 0
+    - _ZWrite: 0
+    m_Colors:
+    - _Color: {r: 0.581, g: 0.581, b: 0.581, a: 1}
+    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _PlanetOrigin: {r: 0, g: 0, b: 0, a: 1}
+    - _SunPos: {r: 1, g: 0, b: 0, a: 0.7}
+    - _UVNoiseAnimation: {r: 0.002, g: 0.001, b: 0, a: 1}
+    - _UniversalTime: {r: 0, g: 0, b: 0, a: 0}

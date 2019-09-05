@@ -7,6 +7,9 @@ Shader "EVE/Cloud" {
 		_Color("Color Tint", Color) = (1,1,1,1)
 		_MainTex("Main (RGB)", 2D) = "white" {}
 		_DetailTex("Detail (RGB)", 2D) = "white" {}
+		_BumpMap("Normal map (RGB)", 2D) = "bump" {}
+		_BumpScale("Normal scale", Float) = 1
+		_DetailNormalMap("Detail normal map (RGB)", 2D) = "bump" {}
 		_UVNoiseTex("UV Noise (RG)", 2D) = "black" {}
 		_FalloffPow("Falloff Power", Range(0,3)) = 2
 		_FalloffScale("Falloff Scale", Range(0,20)) = 3
@@ -64,9 +67,13 @@ Shader "EVE/Cloud" {
 				#include "cubeMap.cginc"
 
 				CUBEMAP_DEF_1(_MainTex)
+				CUBEMAP_DEF_1(_BumpMap)
 
 				sampler2D _DetailTex;
+				sampler2D _DetailNormalMap;
 				sampler2D _UVNoiseTex;
+				float _BumpScale;
+
 				fixed4 _Color;
 				float _FalloffPow;
 				float _FalloffScale;
@@ -100,10 +107,12 @@ Shader "EVE/Cloud" {
 					float3 L : TEXCOORD1;
 					float4 objDetail : TEXCOORD2;
 					float4 objMain : TEXCOORD3;
-					float3 worldNormal : TEXCOORD4;
-					float3 viewDir : TEXCOORD5;
-					LIGHTING_COORDS(6,7)
-					float4 projPos : TEXCOORD8;
+					float3 viewDir : TEXCOORD4;
+					LIGHTING_COORDS(5,6)
+					float4 projPos : TEXCOORD7;
+					half3 tspace0 : TEXCOORD8; // tangent.x, bitangent.x, normal.x
+					half3 tspace1 : TEXCOORD9; // tangent.y, bitangent.y, normal.y
+					half3 tspace2 : TEXCOORD10; // tangent.z, bitangent.z, normal.z
 				};
 
 
@@ -116,10 +125,20 @@ Shader "EVE/Cloud" {
 					float4 vertexPos = mul(unity_ObjectToWorld, v.vertex);
 					float3 origin = mul(unity_ObjectToWorld, float4(0,0,0,1)).xyz;
 					o.worldVert = vertexPos;
-					o.worldNormal = normalize(vertexPos - origin);
+					float3 worldNormal = normalize(vertexPos - origin);
 					o.objMain = mul(_MainRotation, v.vertex);
 					o.objDetail = mul(_DetailRotation, o.objMain);
 					o.viewDir = normalize(WorldSpaceViewDir(v.vertex));
+
+					half4 tangent = half4(normalize(half3(-worldNormal.z, 0, worldNormal.x)), 1);
+					half3 wTangent = tangent.xyz;
+					// compute bitangent from cross product of normal and tangent
+					half tangentSign = tangent.w * unity_WorldTransformParams.w;
+					half3 wBitangent = cross(worldNormal, wTangent) * tangentSign;
+					// output the tangent space matrix
+					o.tspace0 = half3(wTangent.x, wBitangent.x, worldNormal.x);
+					o.tspace1 = half3(wTangent.y, wBitangent.y, worldNormal.y);
+					o.tspace2 = half3(wTangent.z, wBitangent.z, worldNormal.z);
 
 					o.projPos = ComputeScreenPos(o.pos);
 					COMPUTE_EYEDEPTH(o.projPos.z);
@@ -144,13 +163,20 @@ Shader "EVE/Cloud" {
 					main = GET_CUBE_MAP_P(_MainTex, IN.objMain.xyz, _UVNoiseTex, _UVNoiseScale, _UVNoiseStrength, _UVNoiseAnimation);
 					main = ALPHA_COLOR_1(main);
 
+					half3 tnormal = UnpackScaleNormal(GET_CUBE_MAP_1(_BumpMap, IN.objMain.xyz), _BumpScale);
+					half3 worldNormal;
+					worldNormal.x = dot(IN.tspace0, tnormal);
+					worldNormal.y = dot(IN.tspace1, tnormal);
+					worldNormal.z = dot(IN.tspace2, tnormal);
+					//worldNormal = half3(IN.tspace0.z, IN.tspace1.z, IN.tspace2.z); // Disable bump map. multicompile?
+
 					half4 detail = GetCubeDetailMap(_DetailTex, IN.objDetail, _DetailScale);
 
 					float viewDist = distance(IN.worldVert,_WorldSpaceCameraPos);
 					half detailLevel = saturate(2 * _DetailDist*viewDist);
 					color = _Color * main.rgba * lerp(detail.rgba, 1, detailLevel);
 
-					float rim = saturate(abs(dot(IN.viewDir, IN.worldNormal)));
+					float rim = saturate(abs(dot(IN.viewDir, worldNormal)));
 					rim = saturate(pow(_FalloffScale*rim,_FalloffPow));
 					float dist = distance(IN.worldVert,_WorldSpaceCameraPos);
 					float distLerp = saturate(_RimDist*(distance(_PlanetOrigin,_WorldSpaceCameraPos) - _RimDistSub*distance(IN.worldVert,_PlanetOrigin)));
@@ -178,8 +204,8 @@ Shader "EVE/Cloud" {
 
 					//lighting
 					half transparency = color.a;
-					half4 scolor = SpecularColorLight(_WorldSpaceLightPos0, IN.viewDir, IN.worldNormal, color, 0, 0, LIGHT_ATTENUATION(IN));
-					scolor *= Terminator(normalize(_WorldSpaceLightPos0), IN.worldNormal);
+					half4 scolor = SpecularColorLight(_WorldSpaceLightPos0, IN.viewDir, worldNormal, color, 0, 0, LIGHT_ATTENUATION(IN));
+					scolor *= Terminator(normalize(_WorldSpaceLightPos0), worldNormal);
 					scolor.a = transparency;
 #ifdef SOFT_DEPTH_ON
 					float depth = UNITY_SAMPLE_DEPTH(tex2Dproj(_CameraDepthTexture, UNITY_PROJ_COORD(IN.projPos)));
@@ -194,7 +220,7 @@ Shader "EVE/Cloud" {
 					float depthWithOffset = IN.projPos.z;
 #ifndef WORLD_SPACE_ON
 					depthWithOffset *= _DepthPull;
-					OUT.color.a *= step(0, dot(IN.viewDir, IN.worldNormal));
+					OUT.color.a *= step(0, dot(IN.viewDir, worldNormal));
 #endif
 					OUT.depth = (1.0 - depthWithOffset * _ZBufferParams.w) / (depthWithOffset * _ZBufferParams.z);
 					return OUT;
