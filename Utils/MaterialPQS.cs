@@ -453,24 +453,23 @@ namespace Utils
         {
             KSPLog.print("[EVE] Removing PQS Material Manager!");
 
-            RemoveFromPQSCities();
-            if (this.sphere != null && this.sphere.quads != null)
-            {
-                foreach (PQ pq in this.sphere.quads)
-                {
-                    RemoveFromQuads(pq);
-                }
-                ChildUpdater[] cuArray = this.sphere.transform.GetComponentsInChildren<ChildUpdater>(true).Where(cu => cu.Material == material).ToArray();
-                foreach(ChildUpdater cu in cuArray)
-                {
-                    GameObject.DestroyImmediate(cu);
-                }
-                DeferredRenderer[] drArray = (DeferredRenderer[])this.sphere.transform.GetComponentsInChildren<DeferredRenderer>(true).Where(cu => cu.Material == material).ToArray();
-                foreach (DeferredRenderer dr in drArray)
-                {
-                    GameObject.DestroyImmediate(dr);
+            if (this.sphere != null) {
+                RemoveFromPQSCities();
+                if (this.sphere.quads != null) {
+                    foreach (PQ pq in this.sphere.quads) {
+                        RemoveFromQuads(pq);
+                    }
+                    ChildUpdater[] cuArray = this.sphere.transform.GetComponentsInChildren<ChildUpdater>(true).Where(cu => cu.Material == material).ToArray();
+                    foreach (ChildUpdater cu in cuArray) {
+                        GameObject.DestroyImmediate(cu);
+                    }
+                    DeferredRenderer[] drArray = (DeferredRenderer[])this.sphere.transform.GetComponentsInChildren<DeferredRenderer>(true).Where(cu => cu.Material == material).ToArray();
+                    foreach (DeferredRenderer dr in drArray) {
+                        GameObject.DestroyImmediate(dr);
+                    }
                 }
             }
+
             this.sphere = null;
             this.enabled = false;
             this.transform.parent = null;
