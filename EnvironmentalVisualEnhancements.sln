@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2017
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnvironmentalVisualEnhancements.Editor", "EnvironmentalVisualEnhancements.Editor.csproj", "{480C5712-CEDF-11DF-AB75-4CD634FA170D}"
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor", "Assembly-CSharp-Editor.csproj", "{37FDEF94-F268-61DE-86B0-D704F4A83E6D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CityLights", "CityLights\CityLights.csproj", "{C0D6B86D-11B6-4ABB-8517-877C1721E8A2}"
 EndProject
@@ -31,10 +31,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{480C5712-CEDF-11DF-AB75-4CD634FA170D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{480C5712-CEDF-11DF-AB75-4CD634FA170D}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{480C5712-CEDF-11DF-AB75-4CD634FA170D}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{480C5712-CEDF-11DF-AB75-4CD634FA170D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37FDEF94-F268-61DE-86B0-D704F4A83E6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37FDEF94-F268-61DE-86B0-D704F4A83E6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37FDEF94-F268-61DE-86B0-D704F4A83E6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37FDEF94-F268-61DE-86B0-D704F4A83E6D}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C0D6B86D-11B6-4ABB-8517-877C1721E8A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{C0D6B86D-11B6-4ABB-8517-877C1721E8A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0D6B86D-11B6-4ABB-8517-877C1721E8A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
