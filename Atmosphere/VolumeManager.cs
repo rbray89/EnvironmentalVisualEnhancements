@@ -25,13 +25,13 @@ namespace Atmosphere
         Transform Center;
 
         bool enabled;
-        public bool Enabled { get { return enabled; } set { enabled = value; foreach (VolumeSection vs in VolumeList) { vs.Enabled = value; } } }
+        public bool Enabled { get { return enabled; } set { if (enabled != value) { enabled = value; foreach (VolumeSection vs in VolumeList) { vs.Enabled = value; } } } }
 
         public VolumeManager(float cloudSphereRadius, Transform transform, float radius, int divisions)
         {
             Magnitude = cloudSphereRadius;
             Vector3 pos = Vector3.up * Magnitude;
-            translator = new GameObject();
+            translator = new GameObject("VolumeManager");
             Center = translator.transform;
             Center.localScale = Vector3.one;
             Center.parent = transform;

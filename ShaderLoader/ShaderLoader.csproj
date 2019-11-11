@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ShaderLoader</RootNamespace>
     <AssemblyName>ShaderLoader</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -100,8 +100,9 @@
     <Reference Include="Assembly-CSharp-firstpass">
       <HintPath>..\KSPResources\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
-    <Reference Include="KSPUtil">
-      <HintPath>..\KSPResources\KSPUtil.dll</HintPath>
+    <Reference Include="KSPAssets, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>C:\KSP\KSP_1.2\KSP_x64_Data\Managed\KSPAssets.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -111,6 +112,15 @@
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
       <HintPath>..\KSPResources\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>..\KSPResources\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\KSPResources\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UnityWebRequestWWWModule">
+      <HintPath>..\KSPResources\UnityEngine.UnityWebRequestWWWModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -127,30 +137,11 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\alphaMap.cginc" />
-    <None Include="Shaders\cubeMap.cginc" />
-    <None Include="Shaders\PartIVA.shader" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Shaders\CloudShadow.shader" />
-    <None Include="Shaders\CloudVolumeParticle.shader" />
-    <None Include="Shaders\EVEUtils.cginc" />
-    <None Include="Shaders\noiseSimplex.cginc" />
-    <None Include="Shaders\OceanBack.shader" />
-    <None Include="Shaders\PlanetShadow.shader" />
-    <None Include="Shaders\SphereAtmosphere.shader" />
-    <None Include="Shaders\SphereCloud.shader" />
-    <None Include="Shaders\SphereOcean.shader" />
-    <None Include="Shaders\SpherePlanet.shader" />
-    <None Include="Shaders\SpherePlanetCityLights.shader" />
-    <None Include="Shaders\SpherePlanetLighting.shader" />
-    <None Include="Shaders\SphereTerrain.shader" />
-    <None Include="Shaders\SphereTerrainCityLights.shader" />
-    <None Include="Shaders\SphereTerrainLighting.shader" />
+    <Folder Include="Shaders\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(ProjectDir)CompiledShaders\*" "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Shaders" /yir
+    <PostBuildEvent>xcopy "$(ProjectDir)\AssetBundles\*.ksp" "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements" /yir
 xcopy $(TargetFileName) "$(SolutionDir)ContentEVE\GameData\EnvironmentalVisualEnhancements\Plugins\" /eyir
 
 call "C:\Program Files (x86)\Mono\bin\pdb2mdb" $(TargetFileName)

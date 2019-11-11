@@ -58,7 +58,6 @@ namespace Utils
             {
                 mesh.RecalculateBounds();
             }
-            mesh.Optimize();
         }
 
     }

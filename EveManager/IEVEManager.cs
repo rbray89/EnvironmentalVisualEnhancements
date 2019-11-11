@@ -100,7 +100,7 @@ namespace EVEManager
         public abstract void DrawGUI(Rect placementBase, Rect placement);
         public virtual void ILog(String message)
         {
-            UnityEngine.Debug.Log(this.GetType().Name + ": " + message);
+            UnityEngine.Debug.Log("[EVE "+this.GetType().Name + "]: " + message);
         }
     }
 

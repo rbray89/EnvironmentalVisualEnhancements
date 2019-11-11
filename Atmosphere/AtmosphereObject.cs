@@ -37,7 +37,7 @@ namespace Atmosphere
             celestialBody = Tools.GetCelestialBody(body);
             scaledCelestialTransform = Tools.GetScaledTransform(body);
             
-            GameObject go = new GameObject();
+            GameObject go = new GameObject("AtmosphereObject");
             atmospherePQS = go.AddComponent<AtmospherePQS>();
             atmosphere = new AtmosphereVolume(atmosphereMaterial);
             atmospherePQS.Apply(body, atmosphere, altitude);
@@ -53,6 +53,5 @@ namespace Atmosphere
             GameObject.DestroyImmediate(go);
             atmosphere = null;
         }
-
     }
 }

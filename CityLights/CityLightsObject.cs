@@ -87,11 +87,11 @@ namespace CityLights
 
         public void Apply()
         {
-            
             CelestialBody celestialBody = Tools.GetCelestialBody(body);
             if (celestialBody != null)
             {
                 GameObject go = new GameObject();
+                go.name = "EVE City Lights";
                 materialPQS = go.AddComponent<MaterialPQS>();
                 macroMat = materialPQS.Apply(celestialBody, cityLightsMaterial, ShaderLoaderClass.FindShader("EVE/TerrainCityLight"), true, false);
                 macroMat.name = materialName;
@@ -128,10 +128,6 @@ namespace CityLights
             ApplyToMainMenu();
 
             GameEvents.onGameSceneLoadRequested.Add(SceneLoaded);
-            if (HighLogic.LoadedScene == GameScenes.MAINMENU)
-            {
-                ApplyToMainMenu();
-            }
         }
 
         private void SceneLoaded(GameScenes scene)
@@ -157,7 +153,17 @@ namespace CityLights
                         scaledMat.SetTexture("_MainTex", r.material.GetTexture("_MainTex"));
                         Light sunlight = GameObject.FindObjectsOfType<Light>().Last(l => l.isActiveAndEnabled);
                         DeferredRenderer.Add(r.gameObject, scaledMat);
-                        
+
+                        if (mainMenuBody.name.EndsWith("(Clone)")) {
+                            // There is a race condition with Kopernicus. Sometimes, it
+                            // will have cloned a body that already had clouds. Hide old clouds.
+                            for (var c = 0; c < mainMenuBody.transform.childCount; ++c) {
+                                var child = mainMenuBody.transform.GetChild(c).gameObject;
+                                if (child.name.StartsWith("EVE City Lights") && child.name.EndsWith("(Clone)"))
+                                    child.SetActive(false);
+                            }
+                        }
+
                         ScaledCityComponent sc = r.gameObject.AddComponent<ScaledCityComponent>();
                         sc.Apply(scaledMat, sunlight);
 

@@ -54,8 +54,7 @@ namespace Utils
 
             Vector4[] tangents = new Vector4[vertexCount];
 
-            for (long a = 0; a < triangleCount; a += 3)
-            {
+            for (long a = 0; a < triangleCount; a += 3) {
                 long i1 = triangles[a + 0];
                 long i2 = triangles[a + 1];
                 long i3 = triangles[a + 2];
@@ -95,8 +94,7 @@ namespace Utils
             }
 
 
-            for (long a = 0; a < vertexCount; ++a)
-            {
+            for (long a = 0; a < vertexCount; ++a) {
                 Vector3 n = normals[a];
                 Vector3 t = tan1[a];
 
@@ -134,8 +132,7 @@ namespace Utils
         public static Transform GetScaledTransform(string body)
         {
             CelestialBody cb = GetCelestialBody(body);
-            if(cb== null)
-            {
+            if (cb == null) {
                 return null;
             }
             return cb.scaledBody.transform;
@@ -143,9 +140,14 @@ namespace Utils
 
         public static GameObject GetMainMenuObject(string name)
         {
-            return GameObject.FindObjectsOfType<GameObject>().FirstOrDefault(b => b.name == name && b.transform.parent.name.Contains("Scene"));
+            var all = GameObject.FindObjectsOfType<GameObject>();
+            GameObject fallback = null;
+            var altName = name + "(Clone)";
+            foreach (var b in all) {
+                if (b.name == name && b.transform.parent.name.Contains("Scene")) return b;
+                if (b.name == altName && b.transform.parent.name.Contains("Scene")) fallback = b;
+            }
+            return fallback;
         }
-
-
     }
 }

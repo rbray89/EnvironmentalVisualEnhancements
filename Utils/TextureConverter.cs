@@ -245,11 +245,11 @@ namespace Utils
                 byte[] file;
                 if (hasAlpha)
                 {
-                    file = tmpTex.EncodeToPNG();
+                    file = ImageConversion.EncodeToPNG(tmpTex);
                 }
                 else
                 {
-                    file = tmpTex.EncodeToPNG();//file = tmpTex.EncodeToJPG();
+                    file = ImageConversion.EncodeToPNG(tmpTex); // Use JPEG instead?
                 }
                 if (cache != null)
                 {
@@ -311,11 +311,11 @@ namespace Utils
                 byte[] file;
                 if (hasAlpha)
                 {
-                    file = tmpTex.EncodeToPNG();
+                    file = ImageConversion.EncodeToPNG(tmpTex);
                 }
                 else
                 {
-                    file = tmpTex.EncodeToPNG();//file = tmpTex.EncodeToJPG();
+                    file = ImageConversion.EncodeToPNG(tmpTex); // Use JPEG instead?
                 }
                 if (cache != null)
                 {
@@ -463,11 +463,11 @@ namespace Utils
                 byte[] file;
                 if (hasAlpha)
                 {
-                    file = tmpTex.EncodeToPNG();
+                    file = ImageConversion.EncodeToPNG(tmpTex);
                 }
                 else
                 {
-                    file = tmpTex.EncodeToPNG();//file = tmpTex.EncodeToJPG();
+                    file = ImageConversion.EncodeToPNG(tmpTex);//file = tmpTex.EncodeToJPG();
                 }
                 if (cache != null)
                 {
@@ -568,7 +568,7 @@ namespace Utils
                             tmpTex.Apply(false);
                             //size using JPG to force DXT1
 
-                            byte[] file = tmpTex.EncodeToPNG();//tmpTex.EncodeToJPG();
+                            byte[] file = ImageConversion.EncodeToPNG(tmpTex);//tmpTex.EncodeToJPG();
                             if (cache != null)
                             {
                                 Directory.GetParent(cache).Create();
@@ -609,7 +609,7 @@ namespace Utils
                             tmpTex.SetPixels32(colors);
                             tmpTex.Apply(false);
                             //size using JPG to force DXT5
-                            byte[] file = tmpTex.EncodeToPNG();
+                            byte[] file = ImageConversion.EncodeToPNG(tmpTex);
                             if (cache != null)
                             {
                                 Directory.GetParent(cache).Create();
@@ -649,7 +649,7 @@ namespace Utils
                             tmpTex.SetPixels32(colors);
                             tmpTex.Apply(false);
                             //size using JPG to force DXT5 
-                            byte[] file = tmpTex.EncodeToPNG();
+                            byte[] file = ImageConversion.EncodeToPNG(tmpTex);
                             if (cache != null)
                             {
                                 Directory.GetParent(cache).Create();
@@ -743,11 +743,11 @@ namespace Utils
                             byte[] file;
                             if (alphapixel)
                             {
-                                file = tmpTex.EncodeToPNG();
+                                file = ImageConversion.EncodeToPNG(tmpTex);
                             }
                             else
                             {
-                                file = tmpTex.EncodeToPNG();//file = tmpTex.EncodeToJPG();
+                                file = ImageConversion.EncodeToPNG(tmpTex);//file = tmpTex.EncodeToJPG();
                             }
                             if (cache != null)
                             {

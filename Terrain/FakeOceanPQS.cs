@@ -11,7 +11,6 @@ namespace Utils
         {
             sphere.maxLevel = 0;
             sphere.minLevel = 0;
-            KSPLog.print(sphere.transform.childCount);
             for (int i = 0; i < sphere.transform.childCount; i++)
             {
                 Transform t = sphere.transform.GetChild(i);

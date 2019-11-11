@@ -22,7 +22,7 @@ namespace Utils
         }
     }
 
-    public class GUIHelper
+    public static class GUIHelper
     {
         public const float spacingOffset = .25f;
         public const float elementHeight = 22;

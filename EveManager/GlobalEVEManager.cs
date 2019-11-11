@@ -7,6 +7,7 @@ using System.Reflection;
 using System.Text;
 using UnityEngine;
 using Utils;
+using KSP.UI.Screens;
 
 namespace EVEManager
 {
@@ -24,6 +25,8 @@ namespace EVEManager
 
         private Texture2D ToolTipBackground;
 
+        int waitToRunLateSetup = 0;
+
         private void Awake()
         {
             useEditor = false;
@@ -39,17 +42,63 @@ namespace EVEManager
             {
                 Managers = EVEManagerBase.GetManagers();
             }
-            
 
-            Setup(false);
-            StartCoroutine(SetupDelay());
+            if (ShaderLoader.ShaderLoaderClass.loaded) {
+                Setup(false);
+                waitToRunLateSetup = 5; // Wait for Kopernicus to clone it.
+            }
+
+            GameEvents.onGUIApplicationLauncherReady.Add(AddButton);
+            GameEvents.onGUIApplicationLauncherUnreadifying.Add(RemoveButton);
         }
 
+        static ApplicationLauncherButton button = null;
 
-        IEnumerator SetupDelay()
+        void AddButton()
         {
-            yield return new WaitForFixedUpdate();
-            Setup(true);
+            if (button) return;
+
+            var launcher = ApplicationLauncher.Instance;
+            var buttonTexture = GameDatabase.Instance.GetTexture("EnvironmentalVisualEnhancements/button", false);
+
+            button = launcher.AddModApplication(
+                OpenEditor,
+                CloseEditor,
+                null,
+                null,
+                null,
+                null,
+                ApplicationLauncher.AppScenes.TRACKSTATION | ApplicationLauncher.AppScenes.SPACECENTER,
+                buttonTexture);
+        }
+
+        private void OpenEditor()
+        {
+            useEditor = true;
+        }
+
+        private void CloseEditor()
+        {
+            useEditor = false;
+        }
+
+        void RemoveButton(GameScenes data)
+        {
+            if (button) {
+                var launcher = ApplicationLauncher.Instance;
+                launcher.RemoveModApplication(button);
+                button = null;
+            }
+        }
+
+        void FixedUpdate()
+        {
+            if (waitToRunLateSetup > 0) {
+                waitToRunLateSetup--;
+                if (waitToRunLateSetup == 0) {
+                    Setup(true);
+                }
+            }
         }
 
         private void Setup(bool late)
@@ -94,7 +143,8 @@ namespace EVEManager
             {
                 _mainWindowRect.width = 400;
                 _mainWindowRect.height = 720;
-                _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "EVE Manager");
+                var versionInfo = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+                _mainWindowRect = GUI.Window(0x8100, _mainWindowRect, DrawMainWindow, "EVE "+versionInfo+" Config Editor");
             }
         }
 

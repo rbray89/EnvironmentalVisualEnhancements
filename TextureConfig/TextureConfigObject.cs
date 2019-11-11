@@ -59,7 +59,6 @@ namespace TextureConfig
 
         public void Apply() 
         {
-
             if(type == TexTypeEnum.TEX_CUBE_6)
             {
                 

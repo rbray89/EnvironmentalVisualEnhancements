@@ -13,6 +13,7 @@ namespace Utils
         public HalfSphere(float radius, ref Material material, Shader shader)
         {
             meshContainer = new GameObject();
+            meshContainer.name = "EVE HalfSphere";
 
             MeshFilter filter = meshContainer.AddComponent<MeshFilter>();
             Mesh mesh = filter.mesh;
@@ -54,11 +55,9 @@ namespace Utils
             faces.Add(new TriangleIndices(3, 4, 6));
 
             // refine triangles
-            for (int i = 0; i < recursionLevel; i++)
-            {
+            for (int i = 0; i < recursionLevel; i++) {
                 List<TriangleIndices> faces2 = new List<TriangleIndices>();
-                foreach (var tri in faces)
-                {
+                foreach (var tri in faces) {
                     // replace triangle by 4 triangles
                     int a = getMiddlePoint(tri.v1, tri.v2, ref vertList, ref middlePointIndexCache, radius);
                     int b = getMiddlePoint(tri.v2, tri.v3, ref vertList, ref middlePointIndexCache, radius);
@@ -79,8 +78,7 @@ namespace Utils
             mesh.vertices = vertList.ToArray();
 
             List<int> triList = new List<int>();
-            for (int i = 0; i < faces.Count; i++)
-            {
+            for (int i = 0; i < faces.Count; i++) {
                 triList.Add(faces[i].v1);
                 triList.Add(faces[i].v2);
                 triList.Add(faces[i].v3);
@@ -91,8 +89,7 @@ namespace Utils
             float invPi2 = 1 / (2 * Mathf.PI);
             float invPi = 1 / (Mathf.PI);
             List<Vector2> uvList = new List<Vector2>();
-            for (int i = 0; i < vertList.Count; i++)
-            {
+            for (int i = 0; i < vertList.Count; i++) {
                 Vector2 uv = new Vector2();
                 Vector3 normal = vertList[i].normalized;
                 uv.x = 0.5f + invPi2 * Mathf.Atan2(normal.z, normal.x);
@@ -105,7 +102,6 @@ namespace Utils
             Tools.CalculateMeshTangents(mesh);
 
             mesh.RecalculateBounds();
-            mesh.Optimize();
 
             MeshRenderer mr = meshContainer.AddComponent<MeshRenderer>();
             material = mr.material;

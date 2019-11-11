@@ -135,7 +135,7 @@ namespace Atmosphere
                 }
                 else if (go == null)
                 {
-                    CloudsManager.Log("Cannot Find to apply to main Menu!");
+                    CloudsManager.Log("Cannot find "+body+" to apply to main Menu!");
                 }
                 else if (mainMenuBodyTransform == go.transform)
                 {
@@ -229,28 +229,37 @@ namespace Atmosphere
                     {
                         if (FlightCamera.fetch != null)
                         {
-                            layerVolume.UpdatePos(FlightCamera.fetch.mainCamera.transform.position,
-                                                   world2SphereMatrix,
-                                                   mainRotationQ,
-                                                   detailRotationQ,
-                                                   mainRotationMatrix,
-                                                   detailRotationMatrix);
+                            var inRange = layer2D == null ? true : Mathf.Abs(FlightCamera.fetch.cameraAlt - layer2D.Altitude()) < layerVolume.VisibleRange();
+                            if (inRange != layerVolume.enabled)
+                                CloudsManager.Log((inRange ? "Enable" : "Disable")+" clouds when camera: " + FlightCamera.fetch.cameraAlt + " layer: " + (layer2D == null ? "none" : layer2D.Altitude().ToString()));
+                            if (inRange) {
+                                layerVolume.enabled = true;
+                                layerVolume.UpdatePos(FlightCamera.fetch.mainCamera.transform.position,
+                                                       world2SphereMatrix,
+                                                       mainRotationQ,
+                                                       detailRotationQ,
+                                                       mainRotationMatrix,
+                                                       detailRotationMatrix);
+                            } else {
+                                layerVolume.enabled = false;
+                            }
                         }
                         else
                         {
                             layerVolume.UpdatePos(this.sphere.target.position,
-                                                   world2SphereMatrix,
-                                                   mainRotationQ,
-                                                   detailRotationQ,
-                                                   mainRotationMatrix,
-                                                   detailRotationMatrix);
+                                                       world2SphereMatrix,
+                                                       mainRotationQ,
+                                                       detailRotationQ,
+                                                       mainRotationMatrix,
+                                                       detailRotationMatrix);
+                            layerVolume.enabled = true;
                         }
                     }
                 }
             }
         }
 
-        internal void Apply(String body, CloudsMaterial cloudsMaterial, Clouds2D layer2D, CloudsVolume layerVolume, float altitude, Vector3d speed, Vector3d detailSpeed, Vector3 offset, Matrix4x4 rotationAxis, bool killBodyRotation)
+        internal void Apply(String body, CloudsMaterial cloudsMaterial, Clouds2D layer2D, CloudsVolume layerVolume, float altitude, float arc, Vector3d speed, Vector3d detailSpeed, Vector3 offset, Matrix4x4 rotationAxis, bool killBodyRotation)
         {
             this.body = body;
             this.cloudsMaterial = cloudsMaterial;
@@ -287,14 +296,13 @@ namespace Atmosphere
                 this.transform.localScale = Vector3.one;
                 this.radius = (altitude + celestialBody.Radius);
                 
-                
                 double circumference = 2f * Mathf.PI * radius;
                 mainPeriod = -(speed) / circumference;
                 detailPeriod = -(detailSpeed) / circumference;
                 
                 if (layer2D != null)
                 {
-                    this.layer2D.Apply(celestialBody, scaledCelestialTransform, cloudsMaterial, (float)radius);
+                    this.layer2D.Apply(celestialBody, scaledCelestialTransform, cloudsMaterial, this.name, (float)radius, arc);
                 }
 
                 if (!pqs.isActive || HighLogic.LoadedScene == GameScenes.TRACKSTATION)

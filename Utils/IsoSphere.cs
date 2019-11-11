@@ -178,7 +178,6 @@ namespace Utils
             Tools.CalculateMeshTangents(mesh);
 
             mesh.RecalculateBounds();
-            mesh.Optimize();
             
         }
 
@@ -193,7 +192,6 @@ namespace Utils
             }
             mesh.vertices = verticies;
             mesh.RecalculateBounds();
-            mesh.Optimize();
         }
     }
 

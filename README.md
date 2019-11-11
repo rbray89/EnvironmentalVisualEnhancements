@@ -3,6 +3,20 @@ EnvironmentalVisualEnhancements
 
 Visual enhancements including clouds, lights, etc.
 
+Developer Notes
+------------------------
+
+* To rebuild shader asset bundles, open the directory from Unity (correct version for your KSP) and choose "Assets/Build Asset Bundles" menu option.
+
+* Version information is in:
+ * ContentEVE/GameData/EnvironmentalVisualEnhancements/*.version
+ * _BuildManager/Properties/AssemblyVersionInfo.cs
+
+* Edit the LocalSetup.csproj to set your KSP directory and build with Visual Studio.
+
+
+Licenses
+------------
 
 Some portions of this project are under the GNU General Public License (DDS texture loader) 
 and should be distributed as-such. This project was added to replace the functionality of the
@@ -14,6 +28,7 @@ The remainder of the project is under the following license:
 The MIT License (MIT)
 
 Copyright (c) 2013 Ryan Bray
+Copyright (c) 2018-2019 Warwick Allison
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of
 this software and associated documentation files (the "Software"), to deal in

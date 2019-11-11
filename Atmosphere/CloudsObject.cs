@@ -17,6 +17,10 @@ namespace Atmosphere
         Color _Color = 255*Color.white;
         [ConfigItem, Index(1), ValueFilter("isClamped|format|type|alphaMask"), Tooltip("Main texture used with clouds.")]
         TextureWrapper _MainTex;
+        [ConfigItem, ValueFilter("isClamped|format|type"), Tooltip("Normal map texture used with clouds.")]
+        TextureWrapper _BumpMap;
+        [ConfigItem]
+        float _BumpScale = 0.1f;
         [ConfigItem]
         TextureWrapper _DetailTex;
         [ConfigItem]
@@ -28,7 +32,7 @@ namespace Atmosphere
         [ConfigItem, InverseScaled]
         float _DistFade = 1.0f;
         [ConfigItem, InverseScaled]
-        float _DistFadeVert = 0.00004f;
+        float _DistFadeVert = 0.000085f;
         [ConfigItem]
         float _UVNoiseScale = 0.01f;
         [ConfigItem]
@@ -65,6 +69,8 @@ namespace Atmosphere
         Vector3 rotationAxis1 = new Vector3(0, 1, 0);
         [ConfigItem, Tooltip("Axis2 [Default is Z-Axis]")]
         Vector3 rotationAxis2 = new Vector3(0, 0, 1);
+        [ConfigItem, Tooltip("Amount of sphere covered")]
+        float arc = 360f;
 
         [ConfigItem, Tooltip("Settings for the cloud rendering")]
         CloudsMaterial settings = null;
@@ -89,12 +95,12 @@ namespace Atmosphere
             
             GameObject go = new GameObject();
             cloudsPQS = go.AddComponent<CloudsPQS>();
-            go.name = this.name;
+            go.name = "EVE Clouds: "+ this.name;
             Matrix4x4 rotationAxis = new Matrix4x4();
             rotationAxis.SetRow(0, rotationAxis0);
             rotationAxis.SetRow(1, rotationAxis1);
             rotationAxis.SetRow(2, rotationAxis2);
-            cloudsPQS.Apply(body, settings, layer2D, layerVolume, altitude, speed, detailSpeed, offset, rotationAxis, killBodyRotation);
+            cloudsPQS.Apply(body, settings, layer2D, layerVolume, altitude, arc, speed, detailSpeed, offset, rotationAxis, killBodyRotation);
         }
 
         public void Remove()

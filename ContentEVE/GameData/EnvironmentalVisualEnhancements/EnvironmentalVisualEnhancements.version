@@ -1,0 +1,31 @@
+{
+	"NAME": "Environmental Visual Enhancements",
+	"URL": "https://github.com/WazWaz/EnvironmentalVisualEnhancements/raw/master/ContentEVE/GameData/EnvironmentalVisualEnhancements/EnvironmentalVisualEnhancements.version",
+	"DOWNLOAD" : "https://github.com/WazWaz/EnvironmentalVisualEnhancements/releases",
+	"GITHUB": {
+		"USERNAME": "WazWaz",
+		"REPOSITORY": "EnvironmentalVisualEnhancements",
+		"ALLOW_PRE_RELEASE": false
+	},
+	"VERSION": {
+		"MAJOR": 1,
+		"MINOR": 8,
+		"PATCH": 0,
+		"BUILD": 2
+	},
+	"KSP_VERSION": {
+		"MAJOR": 1,
+		"MINOR": 8,
+		"PATCH": 0
+	},
+	"KSP_VERSION_MIN": {
+		"MAJOR": 1,
+		"MINOR": 8,
+		"PATCH": 0
+	},
+	"KSP_VERSION_MAX": {
+		"MAJOR": 1,
+		"MINOR": 8,
+		"PATCH": 99
+	}
+}

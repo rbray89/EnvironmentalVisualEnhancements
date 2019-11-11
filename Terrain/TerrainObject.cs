@@ -32,7 +32,7 @@ namespace Terrain
         [ConfigItem]
         float _DetailDist = 0.00875f;
         [ConfigItem]
-        float _MinLight = .5f;
+        float _MinLight = 0f;
         [ConfigItem]
         Color _SpecularColor = Color.grey;
         [ConfigItem]
@@ -56,7 +56,7 @@ namespace Terrain
         [ConfigItem]
         float _DetailDist = 0.00875f;
         [ConfigItem]
-        float _MinLight = .5f;
+        float _MinLight = 0f;
         [ConfigItem]
         float _Clarity = .005f;
         [ConfigItem]
@@ -86,6 +86,7 @@ namespace Terrain
         public void Apply()
         {
             GameObject go = new GameObject();
+            go.name = "EVE Terrain";
             terrainPQS = go.AddComponent<TerrainPQS>();
             terrainPQS.Apply( body, terrainMaterial, oceanMaterial );
         }

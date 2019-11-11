@@ -70,7 +70,7 @@ namespace Utils
         {
             this.name = value;
             type = cubeType == TextureTypeEnum.RGB2_CubeMap? TextureTypeEnum.RGB2_CubeMap : TextureTypeEnum.CubeMap;
-            KSPLog.print("Creating " + name + " Cubemap");
+            KSPLog.print("[EVE] Creating " + name + " Cubemap");
 
             foreach (Texture2D tex in textures)
             {
@@ -112,12 +112,12 @@ namespace Utils
                 mat.SetTexture("cube" + name + "POS", texPositive);
                 mat.SetTexture("cube" + name + "NEG", texNegative);
                 mat.EnableKeyword("MAP_TYPE_CUBE2_" + index.ToString());
-                KSPLog.print("Applying " + name + " Cubemap");
+                KSPLog.print("[EVE] Applying " + name + " Cubemap");
             }
             else
             {
                 /*
-                KSPLog.print("Setting cube" + name);
+                KSPLog.print("[EVE] Setting cube" + name);
                 mat.SetTexture("cube" + name, cubeTex);
                 mat.EnableKeyword("MAP_TYPE_CUBE_" + index.ToString());
                 */

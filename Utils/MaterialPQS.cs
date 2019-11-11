@@ -160,6 +160,7 @@ namespace Utils
             if(body != null && FlightGlobals.currentMainBody != body)
             {
                 GameObject.DestroyImmediate(this);
+                return;
             }
             
             Camera cam = Camera.current;
@@ -193,10 +194,11 @@ namespace Utils
             DeferredRenderer dr = go.GetComponents<DeferredRenderer>().FirstOrDefault(r => r.Material == material);
             if (dr == null )
             {
-                //Debug.Log("r: " + go.name);
                 Renderer r = go.GetComponent<Renderer>();
-                if (r != null && r.GetType() != typeof(ParticleSystemRenderer))
+                if (r != null && r.GetType() == typeof(MeshRenderer))
                 {
+                    if (r.name == "beat_up_tracking_dish") // No idea why this object causes a crash.
+                        return;
                     dr = go.AddComponent<DeferredRenderer>();
                     dr.Material = material;
                     dr.IncludeTransparent = includeTransparent;
@@ -255,7 +257,7 @@ namespace Utils
 
         public Material Apply(CelestialBody cb, MaterialManager mat, Shader shader, bool updateOrigin, bool subPQS)
         {
-            KSPLog.print("Applying PQS Material Manager!");
+            KSPLog.print("[EVE] Applying PQS Material Manager!");
             material = new Material( shader);
             if (mat != null)
             {
@@ -273,7 +275,7 @@ namespace Utils
             }
             else
             {
-                KSPLog.print("No PQS!");
+                KSPLog.print("[EVE] No PQS!");
             }
             if (pqs != null)
             {
@@ -298,6 +300,7 @@ namespace Utils
             if(subPQS && this.sphere != null && this.sphere.ChildSpheres != null && this.sphere.ChildSpheres.Length > 0)
             {
                 GameObject go = new GameObject();
+                go.name = "EVE Material PQS";
                 MaterialPQS ChildPQS = go.AddComponent<MaterialPQS>();
                 ChildPQS.updateOrigin = false;
                 ChildPQS.subPQS = false;
@@ -448,26 +451,25 @@ namespace Utils
 
         public void Remove()
         {
-            KSPLog.print("Removing PQS Material Manager!");
+            KSPLog.print("[EVE] Removing PQS Material Manager!");
 
-            RemoveFromPQSCities();
-            if (this.sphere != null && this.sphere.quads != null)
-            {
-                foreach (PQ pq in this.sphere.quads)
-                {
-                    RemoveFromQuads(pq);
-                }
-                ChildUpdater[] cuArray = this.sphere.transform.GetComponentsInChildren<ChildUpdater>(true).Where(cu => cu.Material == material).ToArray();
-                foreach(ChildUpdater cu in cuArray)
-                {
-                    GameObject.DestroyImmediate(cu);
-                }
-                DeferredRenderer[] drArray = (DeferredRenderer[])this.sphere.transform.GetComponentsInChildren<DeferredRenderer>(true).Where(cu => cu.Material == material).ToArray();
-                foreach (DeferredRenderer dr in drArray)
-                {
-                    GameObject.DestroyImmediate(dr);
+            if (this.sphere != null) {
+                RemoveFromPQSCities();
+                if (this.sphere.quads != null) {
+                    foreach (PQ pq in this.sphere.quads) {
+                        RemoveFromQuads(pq);
+                    }
+                    ChildUpdater[] cuArray = this.sphere.transform.GetComponentsInChildren<ChildUpdater>(true).Where(cu => cu.Material == material).ToArray();
+                    foreach (ChildUpdater cu in cuArray) {
+                        GameObject.DestroyImmediate(cu);
+                    }
+                    DeferredRenderer[] drArray = (DeferredRenderer[])this.sphere.transform.GetComponentsInChildren<DeferredRenderer>(true).Where(cu => cu.Material == material).ToArray();
+                    foreach (DeferredRenderer dr in drArray) {
+                        GameObject.DestroyImmediate(dr);
+                    }
                 }
             }
+
             this.sphere = null;
             this.enabled = false;
             this.transform.parent = null;

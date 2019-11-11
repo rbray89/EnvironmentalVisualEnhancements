@@ -28,7 +28,8 @@ namespace CelestialShadows
         public ShadowProjector()
         {
             projectorGO = new GameObject();
-            
+            projectorGO.name = "EVE Shadow Projector";
+
             projector = projectorGO.AddComponent<Projector>();
             projector.nearClipPlane = 10;
             projector.fieldOfView = 60;
@@ -41,6 +42,10 @@ namespace CelestialShadows
             projectorGO.layer = (int)Tools.Layer.Local;
 
             projector.material = new Material(ShadowShader);
+
+            // Workaround Unity bug (Case 841236) 
+            projector.enabled = false;
+            projector.enabled = true;
         }
 
         internal void UpdatePos(Vector3 position)
